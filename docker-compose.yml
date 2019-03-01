@@ -21,3 +21,10 @@ services:
     image: mongo
     ports:
       - '27017:27017'
+  crawler:
+    restart: always
+    build: ./crawler
+    ports: 
+      - '8082:8082'
+    volumes:
+      - ./crawler:/usr/src/app/crawler
