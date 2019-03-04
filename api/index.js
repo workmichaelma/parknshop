@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cronjob = require('./cronjob/index')
+
 var axios = require('axios');
 
 const app = express();
@@ -10,13 +12,13 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Connect to MongoDB
-mongoose
-  .connect(
-    'mongodb://mongo:27017/docker-node-mongo',
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
+// mongoose
+//   .connect(
+//     'mongodb://mongo:27017/docker-node-mongo',
+//     { useNewUrlParser: true }
+//   )
+//   .then(() => console.log('MongoDB Connected'))
+//   .catch(err => console.log(err));
 
 const Item = require('./models/Item');
 
@@ -48,6 +50,8 @@ app.post('/item/remove', (req, res) => {
 
   Item.findOneAndRemove(item).then(item => res.redirect('/'));
 });
+
+app.use('/cronjob', cronjob)
 
 const port = 3000;
 
