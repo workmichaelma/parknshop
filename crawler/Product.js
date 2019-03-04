@@ -15,11 +15,19 @@ module.exports = {
         price = child.find('span.price')
         return ( {
           amount: child.attr('data-value'),
-          price: $(price).contents().map((n, p) => {
+          value: $(price).contents().map((n, p) => {
             return p.type === 'text' ? words($(p).text(), /[_A-Za-z0-9.@-]+$/g).join('') : ''
           }).get().join('')
         })
       })).get()
+    } else {
+      ele = $("#item-photo-container .price-container span[itemprop=price]").attr('content')
+      if (ele) {
+        prices.push({
+          amount: '1',
+          value: ele
+        })
+      }
     }
     return prices
   },

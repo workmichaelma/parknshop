@@ -14,6 +14,7 @@ services:
       - '80:3000'
     links:
       - mongo
+      - crawler
     volumes:
       - ./api:/usr/src/app/api
   mongo:

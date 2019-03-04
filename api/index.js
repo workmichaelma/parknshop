@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+var axios = require('axios');
 
 const app = express();
 
@@ -24,6 +25,13 @@ app.get('/', (req, res) => {
     .then(items => res.render('index', { items }))
     .catch(err => res.status(404).json({ msg: 'No items found' }));
 });
+
+app.get('/crawler/:id', (req, res) => {
+  var id = req.params.id
+  axios.get(`http://crawler:8082/${id}`).then((response) => {
+    res.json(response.data)
+  })
+})
 
 app.post('/item/add', (req, res) => {
   const newItem = new Item({
