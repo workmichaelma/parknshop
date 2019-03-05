@@ -50,9 +50,10 @@ module.exports = {
   image($) {
     return $(`meta[property="og:image"]`).attr('content') || ''
   },
-  init($, detail) {
+  init($, code, detail) {
     if (detail) {
       return {
+        code,
         title: this.title($),
         image: this.image($),
         categories: this.categories($),

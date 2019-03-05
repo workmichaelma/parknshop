@@ -8,6 +8,7 @@ const axios = require('axios');
 const app = express()
 
 const Product = require('../models/Product');
+const Category = require('../models/Category');
 
 // Connect to MongoDB
 mongoose.connect('mongodb://mongo:27017/parknshop',{ useNewUrlParser: true })
@@ -15,25 +16,83 @@ mongoose.connect('mongodb://mongo:27017/parknshop',{ useNewUrlParser: true })
   .catch(err => console.log(err));
 
 
-const getProduct = async (id, detail = false) => {
+const fetchProduct = async (id, detail = false) => {
   const need = detail ? '/true' : ''
   return await axios.get(`http://crawler:8082/${id}${need}`).then(async (response) => {
     return response.data
   })  
 }
 
+const getCategoryID = async (c) => {
+  return await Category.find(c).then(async record => {
+    try {
+      if (isEmpty(record)) {
+        const newCategory = new Category(c)
+        return await newCategory.save().then(async category => {
+          return await category._id
+        })
+      } else {
+        return await record[0]._id
+      }
+    } catch (err) {
+      console.log(err, 'getCategoryID')
+      return false
+    }
+  })
+}
+
+const setProduct = async (p) => {
+  try {
+    if (!p.title) {
+      const categoryGetters = await p.categories.map(async c => {
+        return await getCategoryID(c)
+      })
+      
+      const categories = await Promise.all(categoryGetters).then(cate => {
+        return cate
+      })
+
+      return await Product.findOneAndUpdate({ code: p.code }, {
+        $set: {
+          title: p.title,
+          image: p.image,
+        },
+        $addToSet: {
+          records: {
+            date: new Date().toLocaleDateString(),
+            prices: p.prices
+          },
+          categories
+        },
+      }, { upsert: true, new: true })
+    } else {
+      return await Product.findOneAndUpdate({ code: p.code }, {
+        $addToSet: {
+          records: {
+            date: new Date().toLocaleDateString(),
+            prices: p.prices
+          },
+        },
+      }, { upsert: true, new: true })
+    }
+  } catch (err) {
+    console.log(err, 'setProduct')
+  }
+}
+
 app.get('/product', (req, res) => {
   Product.find().then(products => {
     try {
       const calls = map(products, (p) => {
-        if (p.title) {
-          return getProduct(p.code)
-        } else {
-          return getProduct(p.code, true)
-        }
+        return fetchProduct(p.code, !p.title)
       })
-      Promise.all(calls).then((result) => {
-        res.json(result)
+      Promise.all(calls).then(async results => {
+        results = await results.map(async r => {
+          return(r.error) ? {} : await setProduct(r)
+        })
+        Promise.all(results).then((output) => {
+          res.json(output)
+        })
       })
     } catch (err) {
       console.log(err, '/product')
@@ -44,8 +103,30 @@ app.get('/product', (req, res) => {
     res.status(404).json({ msg: 'No items found' })
   });
 })
+app.get('/listcategory', (req, res) => {
+  Category.find({}, '-_id').then(categories => {
+    res.json(categories)
+  }).catch(err => {
+    res.status(404).json({ msg: 'No Category found' })
+  });
+})
+app.get('/clearcategory', (req, res) => {
+  Category.deleteMany({}).then(categories => {
+    res.json(categories)
+  }).catch(err => {
+    res.status(404).json({ msg: 'No Category found' })
+  });
+})
 app.get('/listproduct', (req, res) => {
-  Product.find().then(products => {
+  Product.find({}, '-_id -__v').populate('categories', '-_id -__v -lastMod').then(products => {
+    res.json(products)
+  }).catch(err => {
+    console.log(err)
+    res.status(404).json({ msg: 'No Products found' })
+  });
+})
+app.get('/clearproduct', (req, res) => {
+  Product.deleteMany({}).then(products => {
     res.json(products)
   }).catch(err => {
     res.status(404).json({ msg: 'No Products found' })
