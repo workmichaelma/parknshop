@@ -40,7 +40,7 @@ module.exports = {
         const href = child.find('a').attr('href').split('/')
         return {
           title: trimEnd(child.text()),
-          code: href.pop(),
+          code: href.pop() || trimEnd(child.text()),
           type: href.indexOf(`brandlist`) > 0 ? 'brand': 'category'
         }
       })).get()
@@ -61,6 +61,7 @@ module.exports = {
       }
     } else {
       return {
+        code,
         prices: this.prices($),
       }
     }

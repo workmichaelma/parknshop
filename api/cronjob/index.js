@@ -43,7 +43,7 @@ const getCategoryID = async (c) => {
 
 const setProduct = async (p) => {
   try {
-    if (!p.title) {
+    if (p.title) {
       const categoryGetters = await p.categories.map(async c => {
         return await getCategoryID(c)
       })
@@ -64,7 +64,7 @@ const setProduct = async (p) => {
           },
           categories
         },
-      }, { upsert: true, new: true })
+      })
     } else {
       return await Product.findOneAndUpdate({ code: p.code }, {
         $addToSet: {
@@ -73,7 +73,7 @@ const setProduct = async (p) => {
             prices: p.prices
           },
         },
-      }, { upsert: true, new: true })
+      })
     }
   } catch (err) {
     console.log(err, 'setProduct')
@@ -103,21 +103,21 @@ app.get('/product', (req, res) => {
     res.status(404).json({ msg: 'No items found' })
   });
 })
-app.get('/listcategory', (req, res) => {
+app.get('/list/category', (req, res) => {
   Category.find({}, '-_id').then(categories => {
     res.json(categories)
   }).catch(err => {
     res.status(404).json({ msg: 'No Category found' })
   });
 })
-app.get('/clearcategory', (req, res) => {
+app.get('/clear/category', (req, res) => {
   Category.deleteMany({}).then(categories => {
     res.json(categories)
   }).catch(err => {
     res.status(404).json({ msg: 'No Category found' })
   });
 })
-app.get('/listproduct', (req, res) => {
+app.get('/list/product', (req, res) => {
   Product.find({}, '-_id -__v').populate('categories', '-_id -__v -lastMod').then(products => {
     res.json(products)
   }).catch(err => {
@@ -125,7 +125,7 @@ app.get('/listproduct', (req, res) => {
     res.status(404).json({ msg: 'No Products found' })
   });
 })
-app.get('/clearproduct', (req, res) => {
+app.get('/clear/product', (req, res) => {
   Product.deleteMany({}).then(products => {
     res.json(products)
   }).catch(err => {
