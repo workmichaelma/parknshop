@@ -59,7 +59,8 @@ const setProduct = async (p) => {
         },
         $addToSet: {
           records: {
-            date: new Date().toLocaleDateString(),
+            // date: new Date().toLocaleDateString(),
+            date: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'}),
             prices: p.prices
           },
           categories
@@ -69,7 +70,8 @@ const setProduct = async (p) => {
       return await Product.findOneAndUpdate({ code: p.code }, {
         $addToSet: {
           records: {
-            date: new Date().toLocaleDateString(),
+            // date: new Date().toLocaleDateString(),
+            date: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'}),
             prices: p.prices
           },
         },

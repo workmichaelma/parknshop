@@ -2,3 +2,4 @@ api/node_modules/
 app/node_modules/
 crawler/node_modules/
 app/*.next
+mongo/

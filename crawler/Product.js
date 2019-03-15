@@ -41,7 +41,7 @@ module.exports = {
         return {
           title: trimEnd(child.text()),
           code: href.pop() || trimEnd(child.text()),
-          type: href.indexOf(`brandlist`) > 0 ? 'brand': 'category'
+          type: href.indexOf(`brandlist`) > 0 || !href.pop() ? 'brand': 'category'
         }
       })).get()
     }
