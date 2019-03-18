@@ -2,12 +2,17 @@ version: '3'
 
 services:
   app:
+    container_name: app
     build: ./app
     ports:
       - "8081:3000"
+      - "3000:3000"
+    links:
+      - api
     volumes:
       - ./app:/usr/src/app/app
   api:
+    container_name: api
     restart: always
     build: ./api
     ports:
