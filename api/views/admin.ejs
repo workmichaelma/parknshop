@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Admin</title>
+</head>
+
+<body>
+  <h1>Admin</h1>
+  <h4>Items:</h4>
+  <ul>
+    <% products.forEach(function(item) { %>
+    <li>
+      <%= item.code %>
+    </li>
+    <form method="post" action="/cronjob/remove/product">
+      <input type="hidden" name="id" value="<%= item.code %>">
+      <input type="submit" value="Remove">
+    </form>
+    <% }); %>
+  </ul>
+  <form method="post" action="/cronjob/add/product">
+    <label for="id">ID</label>
+    <input type="text" name="id">
+    <input type="submit" value="Add">
+  </form>
+</body>
+
+</html>

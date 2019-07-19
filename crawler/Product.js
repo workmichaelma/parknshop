@@ -58,11 +58,13 @@ module.exports = {
         image: this.image($),
         categories: this.categories($),
         prices: this.prices($),
+        timestamp: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'})
       }
     } else {
       return {
         code,
         prices: this.prices($),
+        timestamp: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'})
       }
     }
   }

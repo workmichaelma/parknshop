@@ -11,7 +11,9 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 
 // Connect to MongoDB
-mongoose.connect('mongodb://mongo:27017/parknshop',{ useNewUrlParser: true })
+const localDB = `mongodb://mongo:27017/parknshop`
+const cloudDB = `mongodb+srv://michaelma:footballwork@cluster0-s8vjq.azure.mongodb.net/parknshop?retryWrites=true&w=majority`
+mongoose.connect(localDB,{ useNewUrlParser: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
@@ -20,90 +22,27 @@ const fetchProduct = async (id, detail = false) => {
   const need = detail ? '/true' : ''
   return await axios.get(`http://crawler:8082/${id}${need}`).then(async (response) => {
     return response.data
-  })  
-}
-
-const getCategoryID = async (c) => {
-  return await Category.find(c).then(async record => {
-    try {
-      if (isEmpty(record)) {
-        const newCategory = new Category(c)
-        return await newCategory.save().then(async category => {
-          return await category._id
-        })
-      } else {
-        return await record[0]._id
-      }
-    } catch (err) {
-      console.log(err, 'getCategoryID')
-      return false
-    }
+  }).catch(err => {
+    return null
   })
 }
 
-const setProduct = async (p) => {
-  try {
-    if (p.title) {
-      const categoryGetters = await p.categories.map(async c => {
-        return await getCategoryID(c)
-      })
-      
-      const categories = await Promise.all(categoryGetters).then(cate => {
-        return cate
-      })
-
-      return await Product.findOneAndUpdate({ code: p.code }, {
-        $set: {
-          title: p.title,
-          image: p.image,
-        },
-        $addToSet: {
-          records: {
-            // date: new Date().toLocaleDateString(),
-            date: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'}),
-            prices: p.prices
-          },
-          categories
-        },
-      })
-    } else {
-      return await Product.findOneAndUpdate({ code: p.code }, {
-        $addToSet: {
-          records: {
-            // date: new Date().toLocaleDateString(),
-            date: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'}),
-            prices: p.prices
-          },
-        },
-      })
-    }
-  } catch (err) {
-    console.log(err, 'setProduct')
-  }
+const getProduct = async (code) => {
+  const target = code ? {code} : {}
+  return Product.find(target, '-_id -__v').populate('categories', '-_id -__v -lastMod').then(products => {
+    return products
+  }).catch(err => {
+    return []
+  });  
 }
 
-app.get('/product', (req, res) => {
-  Product.find().then(products => {
-    try {
-      const calls = map(products, (p) => {
-        return fetchProduct(p.code, !p.title)
-      })
-      Promise.all(calls).then(async results => {
-        results = await results.map(async r => {
-          return(r.error) ? {} : await setProduct(r)
-        })
-        Promise.all(results).then((output) => {
-          res.json(output)
-        })
-      })
-    } catch (err) {
-      console.log(err, '/product')
-      res.json({err})
-    }
-
-  }).catch(err => {
-    res.status(404).json({ msg: 'No items found' })
-  });
+app.get('/', async (req, res) => {
+  const products = await getProduct()
+  res.render('admin', { products })
+});
+app.get('/list/product', async (req, res) => {
+  const products = await getProduct()
+  res.json(products)
 })
 app.get('/list/category', (req, res) => {
   Category.find({}, '-_id').then(categories => {
@@ -119,14 +58,6 @@ app.get('/clear/category', (req, res) => {
     res.status(404).json({ msg: 'No Category found' })
   });
 })
-app.get('/list/product', (req, res) => {
-  Product.find({}, '-_id -__v').populate('categories', '-_id -__v -lastMod').then(products => {
-    res.json(products)
-  }).catch(err => {
-    console.log(err)
-    res.status(404).json({ msg: 'No Products found' })
-  });
-})
 app.get('/clear/product', (req, res) => {
   Product.deleteMany({}).then(products => {
     res.json(products)
@@ -134,51 +65,121 @@ app.get('/clear/product', (req, res) => {
     res.status(404).json({ msg: 'No Products found' })
   });
 })
-app.get('/add/product/:id', (req, res) => {
-  const code = req.params.id
-  Product.find({code}).then(products => {
-    if (isEmpty(products)) {
-      const newProduct = new Product({code})
-      newProduct.save().then(product => {
-        res.json({
-          done: true,
-          detail: product
-        })
-      })
-    } else {
-      res.json({
-        done: false,
-        detail: 'Product already exist'
-      })
-    }
-  })
-})
 
-app.get('/remove/product/:id', (req, res) => {
-  const code = req.params.id
-  try {
-    Product.find({code}).then(products => {
-      if (!isEmpty(products)) {
-        Product.deleteMany({code}).then((result) => {
-          res.json({
-            done: result.deletedCount > 0,
-            detail: result
-          })
-        })
+const getProductCategoryIDs = async (categories) => {
+  return await Promise.all(await categories.map(async c => {
+    return await Category.find(c).then(async record => {
+      if (isEmpty(record)) {
+        const newCategory = new Category(c)
+        const result = await newCategory.save()
+        return result._id || null
       } else {
-        res.json({
-          done: false,
-          detail: 'Product is not exist'
-        })
+        return record[0]._id
       }
     })
-  } catch (err) {
-    console.log(err, '/remove/product/:id')
-    res.json({
-      done: false,
-      detail: err
-    })
+  }))
+}
+
+const addProduct = async (code) => {
+  let output = {
+    done: false,
+    detail: 'Product already exist'          
   }
+  return Product.find({ code }).then(async products => {
+    if (isEmpty(products)) {
+      const product = await fetchProduct(code, true)
+      if (product) {
+        const categories = await getProductCategoryIDs(product.categories)
+        const newProduct = new Product({
+          code: product.code,
+          title: product.title,
+          image: product.image,
+          categories,
+          records: [
+            {
+              date: product.timestamp,
+              prices: product.prices
+            }
+          ]
+        })
+        const result = await newProduct.save()
+        output = {
+          done: !!result._id,
+          detail: result
+        }
+      }
+    }
+    return output
+  })
+}
+
+app.get('/add/product/:id', async (req, res) => {
+  const code = req.params.id
+  res.json(await addProduct(code))
+})
+app.post('/add/product', async (req, res) => {
+  const code = req.body.id
+  const result = await addProduct(code)
+  if (result.done) {
+    res.redirect('/cronjob')
+  } else {
+    res.json(result)
+  }
+})
+
+const removeProduct = async (code) => {
+  return Product.deleteMany({code}).then((result) => {
+    return {
+      done: result.deletedCount > 0,
+      detail: result
+    }
+  })
+}
+
+app.get('/remove/product/:id', async (req, res) => {
+  const code = req.params.id
+  res.json(await removeProduct(code))
+})
+app.post('/remove/product', async (req, res) => {
+  const code = req.body.id
+  const result = await removeProduct(code)
+  if (result.done) {
+    res.redirect('/cronjob')
+  } else {
+    res.json(result)
+  }
+})
+
+const updateProduct = async (p) => {
+  return await Product.findOneAndUpdate({ code: p.code }, {
+    $addToSet: {
+      records: {
+        date: p.timestamp,
+        prices: p.prices
+      },
+    },
+  })
+}
+
+app.get('/product', async (req, res) => {
+  const result = await Product.find().then(async products => {
+    try {
+      return await Promise.all(products.map(async p => {
+        const product = await fetchProduct(p.code)
+        const newProduct = await updateProduct(product)
+        return {
+          done: !!newProduct._id,
+          detail: newProduct
+        }
+      }))
+    } catch (err) {
+      console.log(err, '/product')
+      return { done: false, detail: err }
+    }
+  }).catch(err => {
+    return { done: false, detail: err }
+  });
+  res.json(result)
 })
 
 module.exports = app
