@@ -9,11 +9,12 @@ const app = express()
 
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const Brand = require('../models/Brand');
 
 // Connect to MongoDB
 const localDB = `mongodb://mongo:27017/parknshop`
 const cloudDB = `mongodb+srv://michaelma:footballwork@cluster0-s8vjq.azure.mongodb.net/parknshop?retryWrites=true&w=majority`
-mongoose.connect(localDB,{ useNewUrlParser: true })
+mongoose.connect(cloudDB,{ useNewUrlParser: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
@@ -29,7 +30,7 @@ const fetchProduct = async (id, detail = false) => {
 
 const getProduct = async (code) => {
   const target = code ? {code} : {}
-  return Product.find(target, '-_id -__v').populate('categories', '-_id -__v -lastMod').then(products => {
+  return Product.find(target, '-__v').populate({ path: 'categories', select: '-__v -lastMod' }).populate({ path: 'brands', select: '-__v -lastMod' }).then(products => {
     return products
   }).catch(err => {
     return []
@@ -58,6 +59,20 @@ app.get('/clear/category', (req, res) => {
     res.status(404).json({ msg: 'No Category found' })
   });
 })
+app.get('/list/brand', (req, res) => {
+  Brand.find({}, '-_id').then(brands => {
+    res.json(brands)
+  }).catch(err => {
+    res.status(404).json({ msg: 'No Brand found' })
+  });
+})
+app.get('/clear/brand', (req, res) => {
+  Brand.deleteMany({}).then(brands => {
+    res.json(brands)
+  }).catch(err => {
+    res.status(404).json({ msg: 'No Brand found' })
+  });
+})
 app.get('/clear/product', (req, res) => {
   Product.deleteMany({}).then(products => {
     res.json(products)
@@ -79,6 +94,19 @@ const getProductCategoryIDs = async (categories) => {
     })
   }))
 }
+const getProductBrandIDs = async (brands) => {
+  return await Promise.all(await brands.map(async c => {
+    return await Brand.find(c).then(async record => {
+      if (isEmpty(record)) {
+        const newBrand = new Brand(c)
+        const result = await newBrand.save()
+        return result._id || null
+      } else {
+        return record[0]._id
+      }
+    })
+  }))
+}
 
 const addProduct = async (code) => {
   let output = {
@@ -90,11 +118,13 @@ const addProduct = async (code) => {
       const product = await fetchProduct(code, true)
       if (product) {
         const categories = await getProductCategoryIDs(product.categories)
+        const brands = await getProductBrandIDs(product.brands)
         const newProduct = new Product({
           code: product.code,
           title: product.title,
           image: product.image,
           categories,
+          brands,
           records: [
             {
               date: product.timestamp,

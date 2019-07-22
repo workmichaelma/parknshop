@@ -16,6 +16,12 @@ const ProductSchema = new Schema({
       ref: 'Category'
     }
   ],
+  brands: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Brand'
+    }
+  ],
   records: [
     {
       _id: false,

@@ -31,17 +31,19 @@ module.exports = {
     }
     return prices
   },
-  categories($) {
+  classify ($) {
     const ele = $('.categoryAndBrandContainer ul')
     let categories = []
     if (ele && ele.children().length) {
       categories = $(ele.children().map((i, child) => {
         child = $(child)
-        const href = child.find('a').attr('href').split('/')
+        const href = child.find('a').attr('href')
+        const params = child.find('a').attr('href').split('/')
         return {
           title: trimEnd(child.text()),
-          code: href.pop() || trimEnd(child.text()),
-          type: href.indexOf(`brandlist`) > 0 || !href.pop() ? 'brand': 'category'
+          code: params.pop() || trimEnd(child.text()),
+          type: params.indexOf(`brandlist`) > 0 || !params.pop() ? 'brand' : 'category',
+          url: href
         }
       })).get()
     }
@@ -52,11 +54,17 @@ module.exports = {
   },
   init($, code, detail) {
     if (detail) {
+      const classify = this.classify($)
       return {
         code,
         title: this.title($),
         image: this.image($),
-        categories: this.categories($),
+        categories: classify.filter(c => {
+          return c.type === 'category'
+        }),
+        brands: classify.filter(c => {
+          return c.type === 'brand'
+        }),
         prices: this.prices($),
         timestamp: new Date().toLocaleString('en-GB', {timeZone: 'Asia/Hong_Kong'})
       }

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const Update = require('./update')
 
-const CategorySchema = new Schema({
+const BrandSchema = new Schema({
   title: String,
   code: {
     type: String,
@@ -15,6 +15,6 @@ const CategorySchema = new Schema({
   }
 });
 
-CategorySchema.plugin(Update)
+BrandSchema.plugin(Update)
 
-module.exports = Category = mongoose.model('Category', CategorySchema);
+module.exports = Brand = mongoose.model('Brand', BrandSchema);
