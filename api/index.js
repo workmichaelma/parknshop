@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cronjob = require('./cronjob/index')
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
+const graphqlHTTP = require('express-graphql')
 
 var axios = require('axios');
 
@@ -9,7 +12,8 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 // Connect to MongoDB
 // mongoose
@@ -52,6 +56,12 @@ app.post('/item/remove', (req, res) => {
 });
 
 app.use('/cronjob', cronjob)
+
+app.use('/graphql', graphqlHTTP({
+  schema: graphqlSchema,
+  rootValue: graphqlResolver,
+  graphiql: true,
+}))
 
 const port = 3000;
 

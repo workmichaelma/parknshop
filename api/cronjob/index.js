@@ -114,7 +114,7 @@ const addProduct = async (code) => {
     detail: 'Product already exist'          
   }
   return Product.find({ code }).then(async products => {
-    if (isEmpty(products)) {
+    if (isEmpty(products) && code) {
       const product = await fetchProduct(code, true)
       if (product) {
         const categories = await getProductCategoryIDs(product.categories)
