@@ -35,6 +35,17 @@ module.exports = buildSchema(`
     records: [ProductRecord!]
   }
 
+  type Report {
+    product: Product!
+    records: [ReportRecord]
+  }
+
+  type ReportRecord {
+    amount: Int
+    value: Float
+    average: Float
+  }
+
   input ProductFilter {
     brand: [ID]
     category: [ID]
@@ -47,9 +58,10 @@ module.exports = buildSchema(`
   }
 
   type RootQuery {
-    product(code: String, _id: ID, filter: ProductFilter, page: Int = 0): [Product!]
+    product(code: String, day: Int = 7, _id: ID, filter: ProductFilter, page: Int = 0): [Product!]
     category(_id: ID): [Category]
     brand(_id: ID): [Brand]
+    report(day: Int = 7): [Report!]
   }
 
   type RootMutation {
