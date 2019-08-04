@@ -25,7 +25,7 @@ module.exports = {
           return isCheapest ? {
             product,
             record: p,
-            average: sum(history.map(h => ~~h)) / history.length
+            average: (sum(history.map(h => parseFloat(h))) / history.length).toFixed(2)
           } : false
         }).filter(p => {
           return p
@@ -34,7 +34,7 @@ module.exports = {
         return !isEmpty(p)
       }).map(product => {
         const records = product.map(p => {
-          return { amount: p.record.amount, value: ~~p.record.value, average: p.average }
+          return { amount: p.record.amount, value: parseFloat(p.record.value), average: p.average }
         })
         return {
           product: product[0].product,
