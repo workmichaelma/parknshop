@@ -5,6 +5,7 @@ const cronjob = require('./cronjob/index')
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 const graphqlHTTP = require('express-graphql')
+const cors = require('cors');
 
 var axios = require('axios');
 
@@ -25,6 +26,14 @@ app.use(bodyParser.json());
 //   .catch(err => console.log(err));
 
 const Item = require('./models/Item');
+
+app.all('*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next()
+ });
 
 app.get('/', (req, res) => {
   Item.find()
@@ -57,6 +66,7 @@ app.post('/item/remove', (req, res) => {
 
 app.use('/cronjob', cronjob)
 
+app.use(cors())
 app.use('/graphql', graphqlHTTP({
   schema: graphqlSchema,
   rootValue: graphqlResolver,

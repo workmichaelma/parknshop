@@ -1,16 +1,26 @@
 version: '3'
 
 services:
-  app:
-    container_name: app
-    build: ./app
+  # app:
+  #   container_name: app
+  #   build: ./app
+  #   ports:
+  #     - "8081:3000"
+  #     - "3000:3000"
+  #   links:
+  #     - api
+  #   volumes:
+  #     - ./app:/usr/src/app/app
+  nuxt:
+    container_name: nuxt
+    build: ./nuxt
     ports:
-      - "8081:3000"
+      - "8083:8083"
       - "3000:3000"
     links:
       - api
     volumes:
-      - ./app:/usr/src/app/app
+      - ./nuxt:/usr/src/app/nuxt
   api:
     container_name: api
     restart: always

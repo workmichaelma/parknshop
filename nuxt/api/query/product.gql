@@ -1,0 +1,27 @@
+query GET_PRODUCT {
+	product{
+   _id
+   code
+   title
+   image
+  categories {
+     _id
+     title
+     code
+     url
+   }
+   brands {
+     _id
+     title
+     code
+     url      
+   }
+   records {
+     date
+     prices {
+       amount
+       value
+     }
+   }
+ }
+}
