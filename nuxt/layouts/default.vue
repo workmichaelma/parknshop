@@ -1,15 +1,41 @@
 <template>
   <div class="default">
     <MainHeader />
-    <nuxt />
+    <div class="main-layout">
+      <div class="container">
+        <div class="row">
+          <nuxt class="nuxt-page" :class="[layout.nuxt]"/>
+          <side-bar-right :class="[layout.sidebarR]"/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import MainHeader from '../components/MainHeader'
+import { mapActions, mapGetters } from 'vuex'
+import MainHeader from '../components/MainHeader/Index'
+import SideBarRight from '../components/Sidebar/Right'
 export default {
+  name: 'default',
   components: {
-    MainHeader
+    MainHeader,
+    SideBarRight
+  },
+  computed: {
+    ...mapGetters({
+      sidebarRisActive: 'sidebarR/isActive'
+    }),
+    layout() {
+      return {
+        nuxt: this.sidebarRisActive ? 'col-md-10' : 'col-md-12',
+        sidebarR: this.sidebarRisActive ? 'col-md-2': ''
+      }
+    }
+  },
+  methods: {
+    ...mapActions({ 
+    })
   }
 }
 </script>
@@ -18,13 +44,20 @@ export default {
   min-height 100vh
   width 100%
   padding-top $header-height
+
+.main-layout
+  background-color #fafafa
+
+.nuxt-page
+  max-width calc( 100% - 2px )
+  min-height "calc( 100vh - %s )" % $header-height
+  padding-top 50px
 </style>
 
 
 <style>
 html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: "SF Pro HK","SF Pro Text","SF Pro Icons","PingFang HK","Helvetica Neue","Helvetica","Arial",sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;

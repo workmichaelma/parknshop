@@ -21,6 +21,8 @@ services:
       - api
     volumes:
       - ./nuxt:/usr/src/app/nuxt
+    networks:
+      - app
   api:
     container_name: api
     restart: always
@@ -32,6 +34,8 @@ services:
       - crawler
     volumes:
       - ./api:/usr/src/app/api
+    networks:
+      - app
   mongo:
     container_name: mongo
     image: mongo
@@ -39,6 +43,8 @@ services:
       - '27017:27017'
     volumes:
       - ./mongo:/data/db
+    networks:
+      - app
   crawler:
     restart: always
     build: ./crawler
@@ -46,3 +52,9 @@ services:
       - '8082:8082'
     volumes:
       - ./crawler:/usr/src/app/crawler
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
