@@ -27,13 +27,13 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    '~/assets/style/main.styl',
+    '~/assets/style/grid.styl'
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-    // { src: '~/plugins/client-init.js', ssr: false }
-
   ],
   /*
   ** Nuxt.js dev-modules
@@ -58,6 +58,11 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    loaders: {
+      stylus: {
+        import: ['~assets/style/main.styl']
+      }
+    },
     /*
     ** You can extend webpack config here
     */

@@ -1,8 +1,25 @@
 <template>
-  <div>
+  <div class="default">
+    <MainHeader />
     <nuxt />
   </div>
 </template>
+
+<script>
+import MainHeader from '../components/MainHeader'
+export default {
+  components: {
+    MainHeader
+  }
+}
+</script>
+<style lang="stylus" scoped>
+.default
+  min-height 100vh
+  width 100%
+  padding-top $header-height
+</style>
+
 
 <style>
 html {
