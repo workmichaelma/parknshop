@@ -15,7 +15,9 @@ header
   left 0
   width 100%
   height $header-height
-  border-bottom 1px solid #eaecef
+  border-bottom 2px solid #f5f5f5
+  background-color #ffffff
+  z-index 100
 </style>
 
 

@@ -28,7 +28,7 @@ export default {
   position relative
   min-width 1px
   min-height "calc( 100vh - %s )" % $header-height
-  border-left 2px solid #eaecef
+  border-left 2px solid #f5f5f5
   &__toggler
     position absolute
     left -30px

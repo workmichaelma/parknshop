@@ -46,7 +46,7 @@ export default {
   padding-top $header-height
 
 .main-layout
-  background-color #fafafa
+  background-color #ffffff
 
 .nuxt-page
   max-width calc( 100% - 2px )
@@ -65,6 +65,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  color: #2c3e50;
 }
 
 *,
@@ -101,5 +102,13 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 </style>
