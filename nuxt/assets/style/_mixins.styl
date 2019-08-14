@@ -1,0 +1,19 @@
+$breakpoint-sm = 0
+// $breakpoint-md = 49rem
+$breakpoint-md = 1024px
+$breakpoint-lg = 1440px
+$breakpoint-xl = 1920px
+
+media_queries = {
+  sm : "only screen",
+  md : "only screen and (min-width: 1024px)",
+  lg : "only screen and (min-width: 1440px)",
+  xl : "only screen and (min-width: 1920px)"
+}
+fix(breakpoints)
+  conditions = ()
+  for breakpoint in breakpoints
+    push(conditions, media_queries[breakpoint])
+  conditions = join(", ", conditions)
+  @media conditions
+    {block}

@@ -1,6 +1,6 @@
 <template>
   <div class="product-card" :class="{sale}">
-    <div v-if="sale" class="product-card__reminder">SALE</div>
+    <!-- <div v-if="sale" class="product-card__reminder">SALE</div> -->
     <div class="product-card__info">
       <div class="product-card__brands">
         <nuxt-link v-for="(brand, k) in product.brands" :key="`product-card__brand[${k}]`" class="product-card__brand" :to="`/brand/${brand.title}`">
@@ -26,9 +26,12 @@
       </div>
       <div class="product-card__price">
         <div class="product-card__price-latest">
-           {{ `$${get(find(product.latestPrice.prices || {}, {amount}), 'value', '')}` }}
+          <span v-if="lastPrice && sale" class="product-card__price-yesterday">
+            {{ `$${lastPrice}` }}
+          </span>
+          {{ `$${currentPrice}` }}
         </div>
-        <div class="product-card__price-past">
+        <div v-if="pastAveragePrice" class="product-card__price-past">
           過去7天平均 ${{ pastAveragePrice }}
         </div>
       </div>
@@ -59,13 +62,14 @@ export default {
   },
   computed: {
     sale() {
-      const records = this.product.records
-      if (records.length) {
-        return reduce(takeRight(this.product.records, 2), (v1, v2) => {
-          return parseFloat(get(find(get(v1, `prices`, []), {amount: this.amount}), 'value')) > parseFloat(get(find(get(v2, 'prices', []), {amount: this.amount}), 'value'))
-        })
-      }
-      return false
+      return this.currentPrice && this.lastPrice ? parseFloat(this.currentPrice) < parseFloat(this.lastPrice) : false
+      // return get(find(this.prices, {amount: this.amount})
+      // const records = this.product.records
+      // if (records.length > 1) {
+      //   return reduce(takeRight(this.product.records, 2), (v1, v2) => {
+      //     return parseFloat(get(find(get(v1, `prices`, []), {amount: this.amount}), 'value')) > parseFloat(get(find(get(v2, 'prices', []), {amount: this.amount}), 'value'))
+      //   })
+      // }
     }
   },
   methods: {
@@ -120,6 +124,7 @@ export default {
     color #374a5b
     margin-right 15px
     background-color #fbdbe1
+    box-shadow -1px 2px 2px 0px #e0a8b1
     &:after
       content ''
       position absolute
@@ -168,6 +173,13 @@ export default {
       font-weight bold
       text-align center
       letter-spacing 2px
+    &-yesterday
+      display inline-block
+      color #c0c0c0
+      font-size 16px
+      font-weight 300
+      letter-spacing 0
+      text-decoration line-through
     &-past
       color green
       font-size 14px

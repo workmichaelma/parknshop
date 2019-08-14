@@ -47,7 +47,7 @@
               過去<strong>{{ day }}</strong>天平均
             </div>
             <div class="price">
-              ${{ pastAveragePrice }}
+              {{ pastAveragePrice ? `$${pastAveragePrice}` : `-` }}
             </div>
           </div>
         </div>
@@ -58,7 +58,7 @@
         <div class="product__chart-title col-md-12">
           <div>過去 </div>
           <div class="product__chart-selectors">
-            <div v-for="(d, k) in [7, 30, 180]" v-on:click="day = d" :key="`product__chart-selector[${k}]`" class="product__chart-selector" :class="{'active': d === day}">{{ d }}</div>
+            <div v-for="(d, k) in [3, 7, 14, 30]" v-on:click="day = d" :key="`product__chart-selector[${k}]`" class="product__chart-selector" :class="{'active': d === day}">{{ d }}</div>
           </div>
           <div> 天價格歷史</div>
         </div>
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Product from '~/mixins/Product'
 
 import get from 'lodash/get'
@@ -82,7 +83,6 @@ import takeRight from 'lodash/takeRight'
 import find from 'lodash/find'
 import sum from 'lodash/sum'
 import dropRight from 'lodash/dropRight'
-import { mapGetters } from 'vuex'
 
 import ProductChart from '~/components/Product/Chart'
 
@@ -110,7 +110,7 @@ export default {
     chartData() {
       return {
         columns: ['日期', '價格'],
-        rows: this.pastPrices.map(record => {
+        rows: [...this.pastPrices, this.product.latestPrice].map(record => {
           const day = new Date(record.date).toLocaleString('en-GB', { timeZone: 'Asia/Hong_Kong' })
           return {
             '日期': `${day.substring(0, 2)}/${day.substring(3,5)}`,
@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     find,
-    get,
+    get
   },
   data() {
     return {
@@ -175,10 +175,12 @@ export default {
       border-top 12px solid transparent
     &.brand
       background-color #b8d3ff
+      box-shadow -1px 2px 2px 0px #ada8e0
       &:after
         border-left 10px solid #b8d3ff
     &.category
       background-color #fbdbe1
+      box-shadow -1px 2px 2px 0px #e0a8b1
       &:after
         border-left 10px solid #fbdbe1
   &__amount-selectors

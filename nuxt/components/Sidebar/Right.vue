@@ -12,12 +12,12 @@ export default {
   name: 'side-bar-right',
   computed: {
     ...mapGetters({
-      isActive: 'sidebarR/isActive'
+      isActive: 'layout/isSidebarActive'
     })
   },
   methods: {
     ...mapActions({
-      turnOn: 'sidebarR/turnOn'
+      turnOn: 'layout/setSidebarActive'
     })
   },
 }

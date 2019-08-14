@@ -5,7 +5,7 @@
       <div class="container">
         <div class="row">
           <nuxt class="nuxt-page" :class="[layout.nuxt]"/>
-          <side-bar-right :class="[layout.sidebarR]"/>
+          <side-bar-right :class="[layout.sidebar]"/>
         </div>
       </div>
     </div>
@@ -24,12 +24,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      sidebarRisActive: 'sidebarR/isActive'
+      sidebarIsActive: 'layout/isSidebarActive'
     }),
     layout() {
       return {
-        nuxt: this.sidebarRisActive ? 'col-md-10' : 'col-md-12',
-        sidebarR: this.sidebarRisActive ? 'col-md-2': ''
+        nuxt: this.sidebarIsActive ? 'col-md-10' : 'col-md-12',
+        sidebar: this.sidebarIsActive ? 'col-md-2': ''
       }
     }
   },

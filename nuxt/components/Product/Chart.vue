@@ -1,5 +1,5 @@
 <template>
-  <ve-histogram v-bind="{data: chartData, grid, extend, settings, colors}" :legend-visible="false"></ve-histogram>
+  <ve-line v-bind="{data: chartData, grid, extend, settings, colors}" :legend-visible="false"></ve-line>
 </template>
 
 <script>
