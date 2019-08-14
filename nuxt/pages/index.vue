@@ -28,7 +28,7 @@ export default {
   methods: {
     ...mapActions({
       fetchProducts: 'product/fetchProducts',
-      isSidebarActive: 'layout/isSidebarActive'
+      isActive: 'sidebar/isActive'
     })
   },
   computed: {
@@ -36,7 +36,6 @@ export default {
       products: 'product/getAllProduct'
     }),
     layout() {
-      // return this.isSidebarActive ? ''
     }
   },
   mounted() {

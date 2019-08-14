@@ -17,3 +17,31 @@ fix(breakpoints)
   conditions = join(", ", conditions)
   @media conditions
     {block}
+
+on-off-button(width)
+  height = width * 0.6
+  padding = width * 0.05
+  display flex
+  align-items center
+  width width
+  height height
+  border-radius 55%/100%
+  background-color #dddddd
+  padding padding
+  cursor pointer
+  transition all linear 0.25s
+  &:after
+    width = width * 0.5
+    content ''
+    display block
+    position static
+    width width
+    height 100%
+    border-radius 100%
+    background-color #ffffff
+    transition all linear 0.25s
+  &.on
+    background-color #6edc5f
+    &:after
+      x = width * 0.4
+      transform translateX(x)

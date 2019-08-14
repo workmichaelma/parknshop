@@ -24,12 +24,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      sidebarIsActive: 'layout/isSidebarActive'
+      sidebarIsActive: 'sidebar/isActive'
     }),
     layout() {
       return {
-        nuxt: this.sidebarIsActive ? 'col-md-10' : 'col-md-12',
-        sidebar: this.sidebarIsActive ? 'col-md-2': ''
+        nuxt: this.sidebarIsActive ? 'col-md-9' : 'col-md-12',
+        sidebar: this.sidebarIsActive ? 'col-md-3': ''
       }
     }
   },
