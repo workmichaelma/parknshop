@@ -1,5 +1,5 @@
-query GET_PRODUCT($code: String!) {
-	product (code: $code){
+query GET_PRODUCT($code: String, $page: Int, $day: Int) {
+	product (code: $code, page: $page, day: $day){
    _id
    code
    title

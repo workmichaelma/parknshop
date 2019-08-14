@@ -52,6 +52,7 @@ export default {
   max-width calc( 100% - 2px )
   min-height "calc( 100vh - %s )" % $header-height
   padding-top 50px
+  padding-bottom 50px
 </style>
 
 

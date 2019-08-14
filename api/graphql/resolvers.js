@@ -33,7 +33,7 @@ module.exports = {
       .then(result => {
         return result.map(r => {
           r.records = r.records.filter(r => {
-            return r.date >= from
+            return new Date(r.date) >= new Date(from)
           })
           return r
         })

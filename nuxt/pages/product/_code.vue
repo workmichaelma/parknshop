@@ -39,7 +39,7 @@
               新
             </div>
             <div class="price">
-              ${{ get(find(latestPrice.prices, {amount}), 'value', '') }}
+              ${{ get(find(product.latestPrice.prices, {amount}), 'value', '') }}
             </div>
           </div>
           <div class="product__price week">
@@ -47,7 +47,7 @@
               過去<strong>{{ day }}</strong>天平均
             </div>
             <div class="price">
-              ${{ lastDaysAveragePrice }}
+              ${{ pastAveragePrice }}
             </div>
           </div>
         </div>
@@ -75,6 +75,8 @@
 </template>
 
 <script>
+import Product from '~/mixins/Product'
+
 import get from 'lodash/get'
 import takeRight from 'lodash/takeRight'
 import find from 'lodash/find'
@@ -92,6 +94,9 @@ export default {
       await store.dispatch('product/fetchProduct', {code})
     }
   },
+  mixins: [
+    Product
+  ],
   components: {
     ProductChart,
   },
@@ -102,37 +107,17 @@ export default {
     product() {
       return this.getProduct(this.$route.params.code)
     },
-    latestPrice() {
-      const records = get(this.product, 'records', [])
-      return get(takeRight(records, 1), '[0]', false)
-    },
-    amounts() {
-      return get(this.latestPrice, 'prices', []).map(p => {
-        return p.amount
-      })
-    },
-    dayPrices() {
-      const dayAfter = new Date(new Date().setDate(new Date().getDate() - this.day))
-      return (dropRight(this.product.records) || []).filter(record => {
-        return new Date(record.date) >= dayAfter
-      })
-    },
-    lastDaysAveragePrice() {
-      return (sum(this.dayPrices.map(record => {
-        return parseFloat(get(find(record.prices, {amount: this.amount}), 'value', 0))
-      })) / this.dayPrices.length).toFixed(2)
-    },
     chartData() {
       return {
         columns: ['日期', '價格'],
-        rows: this.dayPrices.map(record => {
+        rows: this.pastPrices.map(record => {
           const day = new Date(record.date).toLocaleString('en-GB', { timeZone: 'Asia/Hong_Kong' })
           return {
             '日期': `${day.substring(0, 2)}/${day.substring(3,5)}`,
             '價格': parseFloat(get(find(record.prices, {amount: this.amount}), 'value', 0))
           }
         })
-      }      
+      }
     }
   },
   methods: {
