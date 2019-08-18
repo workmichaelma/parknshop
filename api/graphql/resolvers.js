@@ -6,7 +6,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const map = require('lodash/map')
 
-const { addProduct, updateProducts } = require('../controller/Product')
+const { addProduct, updateProducts, preprocessProduct } = require('../controller/Product')
 const { fetchReport } = require('../controller/Report')
 
 module.exports = {
@@ -35,10 +35,12 @@ module.exports = {
           r.records = r.records.filter(r => {
             return new Date(r.date) >= new Date(from)
           })
+          r = preprocessProduct(r)
           return r
         })
-    }).catch(err => {
-      return []
+      }).catch(err => {
+        console.error(err)
+        return []
     })
   },
   category: async ({ _id }) => {
@@ -61,7 +63,7 @@ module.exports = {
     return await fetchReport(day)
   },
   addSampleProduct: async ({ code }, req) => {
-    const sample = `496543 331592 112761 111405 444024 155209 328537 145700 161999 464828`.split(' ')
+    const sample = `496543 331592 112761 111405 444024 155209 328537 145700 161999 464828 140993 117652 139904 113599 183791 495574 460603 460605 460600 350737 346560 362608 493901 497046 497044`.split(' ')
     return await Promise.all(await sample.map(async s => {
       return await addProduct(s)
     }))

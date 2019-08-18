@@ -33,6 +33,7 @@ module.exports = buildSchema(`
     categories: [Category!]
     brands: [Brand!]
     records: [ProductRecord!]
+    sale: [Int]
   }
 
   type Report {
@@ -61,7 +62,7 @@ module.exports = buildSchema(`
     product(code: String, day: Int = 7, _id: ID, filter: ProductFilter, page: Int = 0): [Product!]
     category(_id: ID): [Category]
     brand(_id: ID): [Brand]
-    report(day: Int = 7): [Report!]
+    report(day: Int = 2): [Report!]
   }
 
   type RootMutation {
