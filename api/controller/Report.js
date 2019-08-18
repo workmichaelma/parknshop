@@ -5,8 +5,10 @@ const find = require('lodash/find')
 const isEmpty = require('lodash/isEmpty')
 const sum = require('lodash/sum')
 
+const { preprocessProduct } = require('./Product')
+
 module.exports = {
-  fetchReport: async (day = 7) => {
+  fetchReport: async (day = 2) => {
     const products = await Product.find()
     let report = []
     try {
@@ -20,9 +22,9 @@ module.exports = {
             const r = find(record.prices, { amount })
             return r ? r.value : false
           }).filter(v => { return v !== false })
-          
+
           const isCheapest = every(history, h => { return p.value < h })
-          return isCheapest ? {
+          return isCheapest && history.length > 0 ? {
             product,
             record: p,
             average: (sum(history.map(h => parseFloat(h))) / history.length).toFixed(2)
@@ -32,12 +34,14 @@ module.exports = {
         })
       }).filter(p => {
         return !isEmpty(p)
-      }).map(product => {
-        const records = product.map(p => {
+      }).map(products => {
+        const records = products.map(p => {
           return { amount: p.record.amount, value: parseFloat(p.record.value), average: p.average }
         })
+        const product = preprocessProduct(products[0].product)
+        product.records = takeRight(product.records, day)
         return {
-          product: product[0].product,
+          product,
           records,
         }
       })

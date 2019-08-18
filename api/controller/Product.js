@@ -1,10 +1,27 @@
 const axios = require('axios')
 const isEmpty = require('lodash/isEmpty')
+const find = require('lodash/find')
+const get = require('lodash/get')
 
 const Product = require('../models/Product')
 
 const { getProductCategoryIDs } = require('./Category')
 const { getProductBrandIDs } = require('./Brand')
+
+const fetchSale = (product) => {
+  let sale = []
+  if (product.records.length > 1) {
+    const latest = get(product.records[product.records.length - 1], 'prices')
+    const prev = get(product.records[product.records.length - 2], 'prices')
+    sale = latest.map(p => {
+      const prevPrice = get(find(prev, { amount: p.amount }), 'value')
+      return prevPrice ? (parseFloat(prevPrice) > parseFloat(p.value) ? p.amount : false) : p
+    }).filter(p => {
+      return p !== false
+    })
+  }
+  return sale
+}
 
 const fetchProduct = async (id, detail = false) => {
   const need = detail ? '/true' : ''
@@ -29,6 +46,10 @@ const updateProduct = async (p) => {
 }
 
 module.exports = {
+  preprocessProduct: product => {
+    product.sale = fetchSale(product)
+    return product
+  },
   fetchProduct,
   addProduct: async (code) => {
     return await Product.find({ code }).then(async products => {
