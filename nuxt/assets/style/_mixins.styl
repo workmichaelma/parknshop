@@ -45,3 +45,17 @@ on-off-button(width)
     &:after
       x = width * 0.4
       transform translateX(x)
+
+toggle-button(width)
+  radius = width * 0.2
+  width width
+  height width
+  border-radius 50%
+  border 1px solid #c0c0c0
+  background-color #f5f5f5
+  flex-basis width
+  &.on
+    box-shadow inset 0px 0px 3px 1px #f5f5f5
+    background-color #cdcdcd
+
+

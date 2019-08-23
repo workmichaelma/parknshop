@@ -2,12 +2,9 @@
   <div class="default">
     <MainHeader />
     <div class="main-layout">
-      <div class="container">
-        <div class="row">
-          <nuxt class="nuxt-page" :class="[layout.nuxt]"/>
-          <side-bar-right :class="[layout.sidebar]"/>
-        </div>
-      </div>
+      <nuxt class="nuxt-page"/>
+      <!-- <nuxt class="nuxt-page" :class="[layout.nuxt]"/> -->
+      <!-- <side-bar-right :class="[layout.sidebar]"/> -->
     </div>
   </div>
 </template>
@@ -15,23 +12,14 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import MainHeader from '../components/MainHeader/Index'
-import SideBarRight from '../components/Sidebar/Right'
 export default {
   name: 'default',
   components: {
     MainHeader,
-    SideBarRight
   },
   computed: {
     ...mapGetters({
-      sidebarIsActive: 'sidebar/isActive'
     }),
-    layout() {
-      return {
-        nuxt: this.sidebarIsActive ? 'col-md-9' : 'col-md-12',
-        sidebar: this.sidebarIsActive ? 'col-md-3': ''
-      }
-    }
   },
   methods: {
     ...mapActions({ 
@@ -49,10 +37,8 @@ export default {
   background-color #ffffff
 
 .nuxt-page
-  max-width calc( 100% - 2px )
+  width 100%
   min-height "calc( 100vh - %s )" % $header-height
-  padding-top 50px
-  padding-bottom 50px
 </style>
 
 

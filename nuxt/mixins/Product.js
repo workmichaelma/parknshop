@@ -3,6 +3,7 @@ import dropRight from 'lodash/dropRight'
 import takeRight from 'lodash/takeRight'
 import sum from 'lodash/sum'
 import find from 'lodash/find'
+import reduce from 'lodash/reduce'
 
 export default {
   data() {
@@ -23,9 +24,17 @@ export default {
       })
     },
     pastAveragePrice() {
-      return this.pastPrices.length > 0 ? (sum(this.pastPrices.map(record => {
-        return parseFloat(get(find(record.prices, {amount: this.amount}), 'value', 0))
-      })) / this.pastPrices.length).toFixed(2) : false
+      if (this.pastPrices.length > 0) {
+        const records = reduce(this.pastPrices, (arr, v, k) => {
+          const record = parseFloat(get(find(v.prices, { amount: this.amount }), 'value', 0))
+          if (record) {
+            arr.push(record)
+          }
+          return arr
+        }, [])
+        return records.length > 0 ? (sum(records) / records.length).toFixed(2) : false
+      }
+      return false
     },
     currentPrice() {
       return get(find(this.product.latestPrice.prices || {}, {amount: this.amount}), 'value', false)

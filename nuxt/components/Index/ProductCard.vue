@@ -26,7 +26,7 @@
       </div>
       <div class="product-card__price">
         <div class="product-card__price-latest">
-          <span v-if="product.sale.includes(amount)" class="product-card__price-yesterday">
+          <span v-if="product.sale.includes(amount) && lastPrice" class="product-card__price-yesterday">
             {{ `$${lastPrice}` }}
           </span>
           {{ `$${currentPrice}` }}
@@ -80,6 +80,7 @@ export default {
   mounted() {
     if (this.product.sale.length > 0) {
       this.amount = this.product.sale[0]
+      this.$forceUpdate()
     }
   }
 }
