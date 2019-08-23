@@ -33,7 +33,8 @@ export default {
     return {
       page: 1,
       sidebarStyle: {},
-      filter: {}
+      filter: {},
+      readyToFetchProducts: false
     }
   },
   components: {
@@ -52,6 +53,15 @@ export default {
     },
     updateFilter(f) {
       this.filter = f
+    },
+    doFetch () {
+      const self = this
+      return new Promise(async () => {
+        self.page++
+        self.readyToFetchProducts = false
+        await self.fetchProducts({page: self.page})
+        self.$forceUpdate()
+      })
     }
   },
   computed: {
@@ -84,18 +94,26 @@ export default {
   mounted() {
     const self = this
     this.observer = new IntersectionObserver(async entries => {
-      if (get(entries, '[0].intersectionRatio', 0) > 0) {
-        this.page++
-        await this.fetchProducts({page: this.page})
-        this.$forceUpdate()
-      }
-    }, {})
+      self.readyToFetchProducts = get(entries, '[0].intersectionRatio', 0) > 0
+    }, {
+      rootMargin: '-50% 0px 50% 0px'
+    })
     this.observer.observe(this.$refs.pointer)
+
+    window.addEventListener('scroll', e => {
+      if (this.readyToFetchProducts) {
+        this.doFetch()
+      }
+    })
 
     this.resetSidebar()
     window.addEventListener('resize', e => {
       self.resetSidebar()
     })
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', {})
+    window.removeEventListener('resize', {})
   },
 }
 </script>

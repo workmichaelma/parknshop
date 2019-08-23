@@ -1,74 +1,76 @@
 <template>
   <div class="product">
-    <div class="row">
-      <div class="product__title col-md-10 col-md-offset-1">
-        {{ product.title }}
-      </div>
-    </div>
-    <div class="row">
-      <!-- <div class="product__separator col-md-offset-1 col-md-10" /> -->
-    </div>
-    <div class="row">
-      <div class="product__image col-md-4 col-md-offset-1">
-        <img :src="product.image" />
-      </div>
-      <div class="product__summary col-md-5 col-md-offset-1">
-        <div class="product__tags">
-          <template v-for="(brand, k) in product.brands">
-            <nuxt-link :to="`/brand/${brand.code}`" class="product__tag brand" :key="`product__tag-brand[${k}]`">
-              {{ brand.title }}
-            </nuxt-link>
-          </template>
-          <template v-for="(category, k) in product.categories">
-            <nuxt-link :to="`/category/${category.code}`" class="product__tag category" :key="`product__tag-category[${k}]`">
-              {{ category.title }}
-            </nuxt-link>
-          </template>
-        </div>
-        <div class="product__amount-selectors">
-          <div v-on:click="amount = ~~i" v-for="(i, k) in amounts" :key="`product__amount-selectors[${k}]`" class="selector" :class="{active: ~~i === amount}">
-            <div>
-              <span>{{ i }}</span>
-              <span class="piece">件</span>
-            </div>
-          </div>
-        </div>
-        <div class="product__prices">
-          <div class="product__price latest">
-            <div class="title">
-              新
-            </div>
-            <div class="price">
-              ${{ get(find(product.latestPrice.prices, {amount}), 'value', '') }}
-            </div>
-          </div>
-          <div class="product__price week">
-            <div class="title">
-              過去<strong>{{ day }}</strong>天平均
-            </div>
-            <div class="price">
-              {{ pastAveragePrice ? `$${pastAveragePrice}` : `-` }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="product__chart">
+    <div class="container">
       <div class="row">
-        <div class="product__chart-title col-md-12">
-          <div>過去 </div>
-          <div class="product__chart-selectors">
-            <div v-for="(d, k) in [3, 7, 14, 30]" v-on:click="day = d" :key="`product__chart-selector[${k}]`" class="product__chart-selector" :class="{'active': d === day}">{{ d }}</div>
-          </div>
-          <div> 天價格歷史</div>
+        <div class="product__title col-md-10 col-md-offset-1">
+          {{ product.title }}
         </div>
       </div>
       <div class="row">
-        <no-ssr>
-          <div class="product__chart-graph col-md-8 col-md-offset-2">
-            <product-chart v-bind="{chartData}"/>
+        <!-- <div class="product__separator col-md-offset-1 col-md-10" /> -->
+      </div>
+      <div class="row">
+        <div class="product__image col-md-4 col-md-offset-1">
+          <img :src="product.image" />
+        </div>
+        <div class="product__summary col-md-5 col-md-offset-1">
+          <div class="product__tags">
+            <template v-for="(brand, k) in product.brands">
+              <nuxt-link :to="`/brand/${brand.code}`" class="product__tag brand" :key="`product__tag-brand[${k}]`">
+                {{ brand.title }}
+              </nuxt-link>
+            </template>
+            <template v-for="(category, k) in product.categories">
+              <nuxt-link :to="`/category/${category.code}`" class="product__tag category" :key="`product__tag-category[${k}]`">
+                {{ category.title }}
+              </nuxt-link>
+            </template>
           </div>
-        </no-ssr>
+          <div class="product__amount-selectors">
+            <div v-on:click="amount = ~~i" v-for="(i, k) in amounts" :key="`product__amount-selectors[${k}]`" class="selector" :class="{active: ~~i === amount}">
+              <div>
+                <span>{{ i }}</span>
+                <span class="piece">件</span>
+              </div>
+            </div>
+          </div>
+          <div class="product__prices">
+            <div class="product__price latest">
+              <div class="title">
+                新
+              </div>
+              <div class="price">
+                ${{ get(find(product.latestPrice.prices, {amount}), 'value', '') }}
+              </div>
+            </div>
+            <div class="product__price week">
+              <div class="title">
+                過去<strong>{{ day }}</strong>天平均
+              </div>
+              <div class="price">
+                {{ pastAveragePrice ? `$${pastAveragePrice}` : `-` }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product__chart">
+        <div class="row">
+          <div class="product__chart-title col-md-12">
+            <div>過去 </div>
+            <div class="product__chart-selectors">
+              <div v-for="(d, k) in [3, 7, 14, 30]" v-on:click="day = d" :key="`product__chart-selector[${k}]`" class="product__chart-selector" :class="{'active': d === day}">{{ d }}</div>
+            </div>
+            <div> 天價格歷史</div>
+          </div>
+        </div>
+        <div class="row">
+          <no-ssr>
+            <div class="product__chart-graph col-md-8 col-md-offset-2">
+              <product-chart v-bind="{chartData}"/>
+            </div>
+          </no-ssr>
+        </div>
       </div>
     </div>
   </div>
@@ -138,6 +140,8 @@ export default {
 
 <style lang="stylus" scoped>
 .product
+  padding-top 50px
+  padding-bottom 50px
   img
     width 100%
 
