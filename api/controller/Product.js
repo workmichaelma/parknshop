@@ -10,15 +10,19 @@ const { getProductBrandIDs } = require('./Brand')
 
 const fetchSale = (product) => {
   let sale = []
-  if (product.records.length > 1) {
-    const latest = get(product.records[product.records.length - 1], 'prices')
-    const prev = get(product.records[product.records.length - 2], 'prices')
-    sale = latest.map(p => {
-      const prevPrice = get(find(prev, { amount: p.amount }), 'value')
-      return prevPrice ? (parseFloat(prevPrice) > parseFloat(p.value) ? p.amount : false) : p
-    }).filter(p => {
-      return p !== false
-    })
+  try {
+    if (product.records.length > 1) {
+      const latest = get(product.records[product.records.length - 1], 'prices')
+      const prev = get(product.records[product.records.length - 2], 'prices')
+      sale = latest.map(p => {
+        const prevPrice = get(find(prev, { amount: p.amount }), 'value')
+        return prevPrice ? (parseFloat(prevPrice) > parseFloat(p.value) ? p.amount : false) : p.amount
+      }).filter(p => {
+        return p !== false
+      })
+    }
+  } catch (err) {
+    console.log(err)
   }
   return sale
 }

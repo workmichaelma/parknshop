@@ -20,13 +20,13 @@
     </div>
     <div class="product-card__prices">
       <div class="product-card__selectors">
-        <div v-for="(i, k) in amounts" :key="`product-card__selector[${k}]`" v-on:click="amount = i" class="product-card__selector" :class="{active: amount === i}">
+        <div v-for="(i, k) in amounts" :key="`product-card__selector[${k}]`" v-on:click="amount = i" class="product-card__selector" :class="{active: amount === i, sale: product.sale.includes(i)}">
           {{ i }}<span>件</span>
         </div>
       </div>
       <div class="product-card__price">
         <div class="product-card__price-latest">
-          <span v-if="lastPrice && sale" class="product-card__price-yesterday">
+          <span v-if="product.sale.includes(amount)" class="product-card__price-yesterday">
             {{ `$${lastPrice}` }}
           </span>
           {{ `$${currentPrice}` }}
@@ -62,7 +62,8 @@ export default {
   },
   computed: {
     sale() {
-      return this.currentPrice && this.lastPrice ? parseFloat(this.currentPrice) < parseFloat(this.lastPrice) : false
+      return this.product.sale.length > 0
+      // return this.currentPrice && this.lastPrice ? parseFloat(this.currentPrice) < parseFloat(this.lastPrice) : false
       // return get(find(this.prices, {amount: this.amount})
       // const records = this.product.records
       // if (records.length > 1) {
@@ -75,6 +76,11 @@ export default {
   methods: {
     get,
     find
+  },
+  mounted() {
+    if (this.product.sale.length > 0) {
+      this.amount = this.product.sale[0]
+    }
   }
 }
 </script>
@@ -164,6 +170,8 @@ export default {
       font-size 12px
     &.active
       background #f6f6f6
+    &.sale
+      border-color #e8e837
     &:not(:first-child)
       margin-left 5px
   &__price
@@ -183,6 +191,7 @@ export default {
     &-past
       color green
       font-size 14px
+      text-align right
 </style>
 
 
