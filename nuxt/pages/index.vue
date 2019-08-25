@@ -4,6 +4,9 @@
       <div class="index-page__content" ref="content">
         <div class="product-list">
           <product-card v-for="(product, k) in productList" :key="k" :product="product"/>
+          <div v-if="!productList.length">
+            無
+          </div>
         </div>
         <div class="pointer" ref="pointer"></div>
       </div>
@@ -128,7 +131,7 @@ export default {
     padding-bottom 50px
     flex 1 1 auto
   &__sidebar
-    flex 1 0 250px
+    flex 0 0 250px
     &.collapse
       flex-basis 2px
   .product-list

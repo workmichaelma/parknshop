@@ -1,0 +1,8 @@
+query GET_CATEGORY($title: String, $_id: ID) {
+	category (title: $title, _id: $_id) {
+    _id
+    title
+    code
+    url
+  }
+}

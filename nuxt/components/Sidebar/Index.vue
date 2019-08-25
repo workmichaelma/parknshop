@@ -1,15 +1,15 @@
 <template>
   <div class="index-sidebar">
-    <div v-on:click="turnOn(!isActive)" class="index-sidebar__toggler">
+    <!-- <div v-on:click="turnOn(!isActive)" class="index-sidebar__toggler">
       <div class="toggler" :class="{left: isActive, right: !isActive}"></div>
-    </div>
+    </div> -->
     <div class="index-sidebar__content" :class="{hide: !isActive}">
-      <div class="index-sidebar__show-report">
+      <!-- <div class="index-sidebar__show-report">
         <div v-on:click="showReport = !showReport" class="on-off-button" :class="{on: showReport}"></div>
         <div>
           只顯示今天特價
         </div>
-      </div>
+      </div> -->
       <div class="index-sidebar__filters">
         <div class="index-sidebar__categories filter">
           <div v-for="(c, key) in categories" :key="`index-sidebar__category[${key}]`" v-on:click="toggle(c, 'category')" class="index-sidebar__category filter__item">

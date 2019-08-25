@@ -1,28 +1,28 @@
-query GET_PRODUCT($code: String, $page: Int, $day: Int) {
-	product (code: $code, page: $page, day: $day){
-  _id
-  code
-  title
-  image
-  sale
-  categories {
-     _id
-     title
-     code
-     url
-   }
-   brands {
-     _id
-     title
-     code
-     url      
-   }
-   records {
-     date
-     prices {
-       amount
-       value
-     }
-   }
- }
+query GET_PRODUCT($code: String, $page: Int, $day: Int, $ProductFilter: ProductFilter) {
+	product (code: $code, page: $page, day: $day, filter: $ProductFilter){
+    _id
+    code
+    title
+    image
+    sale
+    categories {
+      _id
+      title
+      code
+      url
+    }
+    brands {
+      _id
+      title
+      code
+      url      
+    }
+    records {
+      date
+      prices {
+        amount
+        value
+      }
+    }
+  }
 }

@@ -11,7 +11,7 @@ export const state = () => []
 
 export const getters = {
   getProduct: (state, getters, rootState, rootGetters) => code => {
-    return find(state, { code }) || {}
+    return find(state, { code })
   },
   getAllProduct: (state) => {
     return state
@@ -19,13 +19,15 @@ export const getters = {
 }
 
 export const actions = {
-  async fetchProducts({ getters, rootGetters, commit }, { page, day }) {
+  async fetchProducts({ getters, rootGetters, commit }, { page, day, filter = {} }) {
     page = page || 0
     day = day || 7
+    const ProductFilter = { brand: filter.brand || [], category: filter.category || [] }
     const products = await client.query({
       query: GET_PRODUCT,
       variables: {
-        page
+        page,
+        ProductFilter
       }
     })
     if (get(products, 'data.product')) {
@@ -37,17 +39,19 @@ export const actions = {
   },
   async fetchProduct({ getters, rootGetters, commit }, { code, day }) {
     day = day || 180
-    const products = await client.query({
-      query: GET_PRODUCT,
-      variables: {
-        code,
-        day
-      },
-    })
-    if (get(products, 'data.product[0].code')) {
-      const p = products.data.product[0]
-      preprocessProduct(p)
-      commit('saveProduct', { code: p.code, product: p })
+    if (!getters.getProduct(code)) {
+      const products = await client.query({
+        query: GET_PRODUCT,
+        variables: {
+          code,
+          day
+        },
+      })
+      if (get(products, 'data.product[0].code')) {
+        const p = products.data.product[0]
+        preprocessProduct(p)
+        commit('saveProduct', { code: p.code, product: p })
+      }
     }
   },
 }

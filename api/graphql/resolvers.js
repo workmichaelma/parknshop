@@ -5,6 +5,7 @@ const Brand = require('../models/Brand')
 const ObjectId = require('mongoose').Types.ObjectId; 
 
 const map = require('lodash/map')
+const get = require('lodash/get')
 
 const { addProduct, updateProducts, preprocessProduct } = require('../controller/Product')
 const { fetchReport } = require('../controller/Report')
@@ -15,10 +16,10 @@ module.exports = {
     const itemPerPage = page === 0 ? 0 : 5
     const from = new Date(new Date().setDate(new Date().getDate() - day)).toLocaleString('en-GB', { timeZone: 'Asia/Hong_Kong' })
 
-    const categories = filter ? map(filter.category || [], c => {
+    const categories = get(filter, 'category.length', 0) > 0 ? map(filter.category || [], c => {
       return { categories: new ObjectId(c) }
-    }) : {}
-    const brands = filter ? map(filter.brand || [], c => {
+    }) || {} : {}
+    const brands = get(filter, 'brand.length', 0) > 0 ? map(filter.brand || [], c => {
       return { brands: new ObjectId(c) }
     }) : {}
 
@@ -43,8 +44,8 @@ module.exports = {
         return []
     })
   },
-  category: async ({ _id }) => {
-    const target = _id ? {_id} : {}
+  category: async ({ _id, title }) => {
+    const target = _id ? { _id } : title ? { title } : {}
     return Category.find(target, '-__v').then(categories => {
       return categories
     }).catch(err => {
@@ -52,7 +53,7 @@ module.exports = {
     });
   },
   brand: async ({ _id }) => {
-    const target = _id ? {_id} : {}
+    const target = _id ? { _id } : title ? { title } : {}
     return Brand.find(target, '-__v').then(brands => {
       return brands
     }).catch(err => {

@@ -8,7 +8,7 @@ import reduce from 'lodash/reduce'
 export default {
   data() {
     return {
-      amount: 1
+      // amount: 1
     }
   },
   computed: {

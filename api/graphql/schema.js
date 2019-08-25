@@ -60,7 +60,7 @@ module.exports = buildSchema(`
 
   type RootQuery {
     product(code: String, day: Int = 7, _id: ID, filter: ProductFilter, page: Int = 0): [Product!]
-    category(_id: ID): [Category]
+    category(_id: ID, title: String): [Category!]
     brand(_id: ID): [Brand]
     report(day: Int = 2): [Report!]
   }
