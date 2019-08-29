@@ -6,6 +6,7 @@ module.exports = buildSchema(`
     title: String
     code: String
     url: String
+    products: [Product]
   }
 
   type Brand {
@@ -13,6 +14,7 @@ module.exports = buildSchema(`
     title: String
     code: String
     url: String
+    products: [Product]
   }
 
   type ProductPrice {

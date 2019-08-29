@@ -31,13 +31,37 @@ module.exports = {
       .limit(itemPerPage)
       .populate({ path: 'categories', select: '-__v -lastMod' })
       .populate({ path: 'brands', select: '-__v -lastMod' })
-      .then(result => {
+      .then(async result => {
         return result.map(r => {
-          r.records = r.records.filter(r => {
+          const records = r.records.filter(r => {
             return new Date(r.date) >= new Date(from)
           })
-          r = preprocessProduct(r)
-          return r
+          const categories = r.categories.map(c => {
+            const products = Product
+            .find({ code: { "$ne": r.code }})
+            .and({ categories: new ObjectId(c._id) })
+            .limit(5)
+            .populate({ path: 'categories', select: '-__v -lastMod' })
+            .populate({ path: 'brands', select: '-__v -lastMod' })
+            .then(ps => {
+              return ps.map(p => preprocessProduct(p._doc))
+            })
+            return { ...c._doc, products }
+          })
+          const brands = r.brands.map(b => {
+            const products = Product
+            .find({ code: { "$ne": r.code }})
+            .and({ brands: new ObjectId(b._id) })
+            .limit(5)
+            .populate({ path: 'categories', select: '-__v -lastMod' })
+            .populate({ path: 'brands', select: '-__v -lastMod' })
+            .then(ps => {
+              return ps.map(p => preprocessProduct(p._doc))
+            })
+            return { ...b._doc, products }
+          })
+          let product = preprocessProduct(r._doc)
+          return { ...product, categories, records, brands }
         })
       }).catch(err => {
         console.error(err)
