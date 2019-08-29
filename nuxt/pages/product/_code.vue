@@ -21,13 +21,7 @@ export default {
       const code = route.params.code
       await store.dispatch('product/fetchProduct', {code})
       const product = store.getters['product/getProduct'](code)
-      if (product) {
-        for await (let c of product.categories) {
-          store.commit('category/saveCategory', c)
-          const category = store.getters['category/getCategory']({_id: c._id})
-          await store.dispatch('category/fetchProducts', {_id: c._id, page: 1})
-        }
-      } else {
+      if (!product) {
         res.redirect(404, '')
       }
      } catch (err) {

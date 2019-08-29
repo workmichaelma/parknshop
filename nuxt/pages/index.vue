@@ -30,7 +30,7 @@ import IndexSidebar from '~/components/Sidebar/Index'
 export default {
   name: 'index-page',
   async asyncData({isDev, route, store, env, params, query, req, res, redirect, error}) {
-    await store.dispatch('product/fetchProducts', {page: 1})
+    await store.dispatch('home/fetchProducts', {page: 1})
   },
   data() {
     return {
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchProducts: 'product/fetchProducts',
+      fetchProducts: 'home/fetchProducts',
     }),
     find,
     resetSidebar() {
@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      products: 'product/getAllProduct',
+      products: 'home/getAllProduct',
       isSidebarActive: 'index-sidebar/isActive'
     }),
     layout() {

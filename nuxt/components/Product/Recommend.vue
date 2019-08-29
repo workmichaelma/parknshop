@@ -1,5 +1,5 @@
 <template>
-  <div class="product-recommend">
+  <div class="product-recommend" v-if="products">
     <div class="container">
       <div class="row">
         <div v-for="(product, key) in products" :key="key" class="col-md-3">
@@ -20,11 +20,13 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import Product from '~/mixins/Product'
 import get from 'lodash/get'
 import reduce from 'lodash/reduce'
 import uniq from 'lodash/uniq'
 import filter from 'lodash/filter'
 import take from 'lodash/take'
+import shuffle from 'lodash/shuffle'
 export default {
   name: 'product-recommend',
   props: {
@@ -33,21 +35,25 @@ export default {
       type: Object,
     }
   },
+  mixins: [
+    Product
+  ],
   computed: {
     ...mapGetters({
       getCategory: 'category/getCategory',
       getProduct: 'product/getProduct'
     }),
     products() {
-      return take(uniq(filter(reduce(this.product.categories.map(c => {
-        return get(this.getCategory({_id: c._id}), 'products', [])
-      }), (arr, v, k) => {
-        return [...arr, ...v]
-      }, []), c => {
-        return c !== this.product.code
-      })).map(p => {
-        return this.getProduct(p)
-      }), 4)
+      return take(shuffle(this.relatedProducts), 4)
+      // return take(uniq(filter(reduce(this.product.categories.map(c => {
+      //   return get(this.getCategory({_id: c._id}), 'products', [])
+      // }), (arr, v, k) => {
+      //   return [...arr, ...v]
+      // }, []), c => {
+      //   return c !== this.product.code
+      // })).map(p => {
+      //   return this.getProduct(p)
+      // }), 4)
     }
   },
   methods: {

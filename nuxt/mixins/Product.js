@@ -4,6 +4,7 @@ import takeRight from 'lodash/takeRight'
 import sum from 'lodash/sum'
 import find from 'lodash/find'
 import reduce from 'lodash/reduce'
+import concat from 'lodash/concat'
 
 export default {
   data() {
@@ -44,6 +45,16 @@ export default {
         return get(find(get(takeRight(this.pastPrices, 1), '[0].prices'), {amount: this.amount}), 'value', false)
       }
       return false
+    },
+    relatedProducts() {
+      let products = []
+      this.product.categories.forEach(c => {
+        products = concat(products, c.products || [])
+      })
+      this.product.brands.forEach(b => {
+        products = concat(products, b.products || [])
+      })
+      return products
     }
   },
   created() {

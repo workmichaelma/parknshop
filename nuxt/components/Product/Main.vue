@@ -6,7 +6,7 @@
           {{ product.title }}
         </div>
         <div class="product-main__redirect col-md-4">
-          <a :href="`https://www.parknshop.com/zh-hk/code/p/${product.code}`">
+          <a :href="`https://www.parknshop.com/zh-hk/code/p/${product.code}`" target="_blank">
             百佳網頁
           </a>
         </div>
@@ -107,8 +107,7 @@ export default {
     display flex
     flex-direction column
     > div
-      &:not(:first-child)
-        margin-top 15px
+      margin-top 15px
   &__tags
     display flex
     flex-wrap wrap

@@ -57,7 +57,8 @@ export default {
   },
   data () {
     return {
-      day: 7
+      day: 7,
+      amount: 1
     }
   },
   computed: {

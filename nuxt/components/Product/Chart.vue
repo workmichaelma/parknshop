@@ -12,8 +12,8 @@
       </div>
       <div class="row">
         <no-ssr>
-          <div class="product__chart-graph col-md-8 col-md-offset-2">
-            <ve-line v-bind="{data: chartData, grid, extend, settings, colors}" :legend-visible="false"></ve-line>
+          <div class="product__chart-graph col-md-12 col-lg-8 col-lg-offset-2">
+            <ve-line v-bind="{data: chartData, grid, extend, settings, colors}" :legend-visible="false" :width="`100%`"></ve-line>
           </div>
         </no-ssr>
       </div>

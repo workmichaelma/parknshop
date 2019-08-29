@@ -13,30 +13,9 @@ export const getters = {
   getProduct: (state, getters, rootState, rootGetters) => code => {
     return find(state, { code })
   },
-  getAllProduct: (state) => {
-    return state
-  }
 }
 
 export const actions = {
-  async fetchProducts({ getters, rootGetters, commit }, { page, day, filter = {} }) {
-    page = page || 0
-    day = day || 7
-    const ProductFilter = { brand: filter.brand || [], category: filter.category || [] }
-    const products = await client.query({
-      query: GET_PRODUCT,
-      variables: {
-        page,
-        ProductFilter
-      }
-    })
-    if (get(products, 'data.product')) {
-      (products.data.product || []).forEach(p => {
-        preprocessProduct(p)
-        commit('saveProduct', { code: p.code, product: p })
-      })
-    }
-  },
   async fetchProduct({ getters, rootGetters, commit }, { code, day }) {
     day = day || 180
     if (!getters.getProduct(code)) {
