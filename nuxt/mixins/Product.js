@@ -54,7 +54,12 @@ export default {
       this.product.brands.forEach(b => {
         products = concat(products, b.products || [])
       })
-      return products
+      return reduce(products, (arr, v, k) => {
+        if (!find(arr, { code: v.code })) {
+          arr.push(v)
+        }
+        return arr
+      }, [])
     }
   },
   created() {

@@ -83,10 +83,10 @@ export default {
         if (isEmpty(this.filter)) {
           return true
         } else {
-          const category = reduce(p.categories, (show, c, i) => {
+          const category = this.filter.category.showAll || reduce(p.categories, (show, c, i) => {
             return show || !!find(this.filter.category.on, {code: c.code})
           }, false)
-          const brand = reduce(p.brands, (show, b, i) => {
+          const brand = this.filter.brand.showAll || reduce(p.brands, (show, b, i) => {
             return show || !!find(this.filter.brand.on, {code: b.code})
           }, false)
           return category && brand

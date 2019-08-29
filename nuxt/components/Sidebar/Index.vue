@@ -12,12 +12,20 @@
       </div> -->
       <div class="index-sidebar__filters">
         <div class="index-sidebar__categories filter">
+          <div v-on:click="showAll('category')" class="index-sidebar__category filter__item">
+            <div class="toggle-button" :class="{on: filter.category.showAll}"></div>
+            <div>全選</div>
+          </div>
           <div v-for="(c, key) in categories" :key="`index-sidebar__category[${key}]`" v-on:click="toggle(c, 'category')" class="index-sidebar__category filter__item">
             <div class="toggle-button" :class="{on: find(filter.category.on, c)}"></div>
             <div>{{ c.title }}</div>
           </div>
         </div>
         <div class="index-sidebar__brands filter">
+          <div v-on:click="showAll('brand')" class="index-sidebar__brand filter__item">
+            <div class="toggle-button" :class="{on: filter.brand.showAll}"></div>
+            <div>全選</div>
+          </div>
           <div v-for="(b, key) in brands" :key="`index-sidebar__brand[${key}]`" v-on:click="toggle(b, 'brand')" class="index-sidebar__brand filter__item">
             <div class="toggle-button" :class="{on: find(filter.brand.on, b)}"></div>
             <div>{{ b.title }}</div>
@@ -44,12 +52,12 @@ export default {
         category: {
           list: [],
           on: [],
-          off: []
+          showAll: true
         },
         brand:  {
           list: [],
           on: [],
-          off: []
+          showAll: true
         }
       },
       categories: [],
@@ -97,13 +105,17 @@ export default {
       this.categories.forEach(c => {
         if (!this.filter.category.list.includes(c.code)) {
           this.filter.category.list.push(c.code)
-          this.filter.category.on.push(c)
+          if (!this.filter.category.showAll) {
+            this.filter.category.on.push(c)
+          }
         }
       })
       this.brands.forEach(b => {
         if (!this.filter.brand.list.includes(b.code)) {
           this.filter.brand.list.push(b.code)
-          this.filter.brand.on.push(b)
+          if (!this.filter.brand.showAll) {
+            this.filter.brand.on.push(c)
+          }
         }
       })
 
@@ -112,19 +124,30 @@ export default {
     toggle(v, k) {
       if (find(this.filter[k].on, v)) {
         this.filter[k].on = reject(this.filter[k].on, v)
-        this.filter[k].off.push(v)
+        if (this.filter[k].on.length < 1) {
+          this.filter[k].showAll = true
+        }
       } else {
-        this.filter[k].off = reject(this.filter[k].off, v)
         this.filter[k].on.push(v)
+        this.filter[k].showAll = false
       }
     },
-  },
-  mounted() {
-    // this.init()
+    showAll(v) {
+      this.filter[v].showAll = true
+      this.filter[v].on = []
+    }
   },
   watch: {
-    filter () {
-      this.$parent.updateFilter(this.filter)
+    filter: {
+      handler (v1, v2) {
+        if (this.filter.category.showAll) {
+          this.filter.category.on = []
+        }
+        if (this.filter.brand.showAll) {
+          this.filter.brand.on = []
+        }
+        this.$parent.updateFilter(this.filter)
+      },
     },
     products: {
       handler () {
