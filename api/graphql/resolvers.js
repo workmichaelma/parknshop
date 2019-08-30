@@ -6,8 +6,9 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const map = require('lodash/map')
 const get = require('lodash/get')
+const sortBy = require('lodash/sortBy')
 
-const { addProduct, updateProducts, preprocessProduct } = require('../controller/Product')
+const { addProduct, updateProducts, preprocessProduct, previewProduct } = require('../controller/Product')
 const { fetchReport } = require('../controller/Report')
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
       .populate({ path: 'categories', select: '-__v -lastMod' })
       .populate({ path: 'brands', select: '-__v -lastMod' })
       .then(async result => {
-        return result.map(r => {
+        return sortBy(result.map(r => {
           const records = r.records.filter(r => {
             return new Date(r.date) >= new Date(from)
           })
@@ -62,7 +63,9 @@ module.exports = {
           })
           let product = preprocessProduct(r._doc)
           return { ...product, categories, records, brands }
-        })
+        }), [p1 => {
+          return p1.sale.length < 1
+        }])
       }).catch(err => {
         console.error(err)
         return []
@@ -98,6 +101,9 @@ module.exports = {
   },
   updateProducts: async ({ }, req) => {
     return await updateProducts()
+  },
+  previewProduct: async ({ code, url}, req) => {
+    return await previewProduct({ code, url })
   },
   clear: async ({ }, req) => {
     return {

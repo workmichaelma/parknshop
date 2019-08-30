@@ -38,6 +38,13 @@ module.exports = buildSchema(`
     sale: [Int]
   }
 
+  type PreviewProduct {
+    code: String!
+    title: String!
+    image: String!
+    prices: [ProductPrice!]
+  }
+
   type Report {
     product: Product!
     records: [ReportRecord]
@@ -65,6 +72,7 @@ module.exports = buildSchema(`
     category(_id: ID, title: String): [Category!]
     brand(_id: ID): [Brand]
     report(day: Int = 2): [Report!]
+    previewProduct(code: String, url: String): PreviewProduct!
   }
 
   type RootMutation {

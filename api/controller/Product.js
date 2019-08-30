@@ -8,6 +8,19 @@ const Product = require('../models/Product')
 const { getProductCategoryIDs } = require('./Category')
 const { getProductBrandIDs } = require('./Brand')
 
+const previewProduct = async ({ code, url }) => {
+  const query = code ? `code/${code}` : url ? `url/${url}` : false
+  if (query) {
+    return await axios.get(`http://crawler:8082/${query}`).then(async (response) => {
+      return response.data
+    }).catch(err => {
+      console.error(err)
+      return null
+    })
+  }
+  return null
+}
+
 const fetchSale = (product) => {
   let sale = []
   try {
@@ -55,6 +68,7 @@ module.exports = {
     return product
   },
   fetchProduct,
+  previewProduct,
   addProduct: async (code) => {
     return await Product.find({ code }).then(async products => {
       try {
