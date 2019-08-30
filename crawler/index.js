@@ -5,6 +5,64 @@ const app = express();
 
 const Product = require('./Product')
 
+app.get('/code/:code', (req, res) => {
+  const code = req.params.code
+  try {
+    var c = new Crawler({
+      maxConnections: 10,
+      // This will be called for each crawled page
+      callback: function (error, doc, done) {
+        console.log(`Getting Product from code: ${code}, ${doc.statusCode}`)
+        if (error || doc.statusCode !== 200) {
+          console.log(error || doc.statusCode);
+          res.json({error: true})
+        } else {
+          var $ = doc.$;
+          res.json(Product.init($, code, true))
+          // $ is Cheerio by default
+          //a lean implementation of core jQuery designed specifically for the server
+        }
+        done();
+      }
+    });
+    
+    c.queue(`https://www.parknshop.com/zh-hk/code/p/${code}`);
+  } catch (err) {
+    res.status(404).json({})
+  }
+})
+
+app.get('/url/:url', (req, res) => {
+  const url = req.params.url
+  if (new RegExp(/parknshop.com/g).test(url)) {
+    try {
+      var c = new Crawler({
+        maxConnections: 10,
+        // This will be called for each crawled page
+        callback: function (error, doc, done) {
+          console.log(`Getting Product from url: ${url}, ${doc.statusCode}`)
+          if (error || doc.statusCode !== 200) {
+            console.log(error || doc.statusCode);
+            res.json({error: true})
+          } else {
+            var $ = doc.$;
+            res.json(Product.init($, false, true))
+            // $ is Cheerio by default
+            //a lean implementation of core jQuery designed specifically for the server
+          }
+          done();
+        }
+      });
+      
+      c.queue(url);
+    } catch (err) {
+      res.json({})
+    }
+  } else {
+    res.status(404).json({ Result: 404 })
+  }
+})
+
 app.get('/:id/:detail?', (req, res) => {
   var id = req.params.id
   var detail = req.params.detail || false

@@ -52,11 +52,14 @@ module.exports = {
   image($) {
     return $(`meta[property="og:image"]`).attr('content') || ''
   },
-  init($, code, detail) {
+  code($) {
+    return $(`span.productvariantCode`).text()
+  },
+  init($, code = false, detail) {
     if (detail) {
       const classify = this.classify($)
       return {
-        code,
+        code: code || this.code($),
         title: this.title($),
         image: this.image($),
         categories: classify.filter(c => {
