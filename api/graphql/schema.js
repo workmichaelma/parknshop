@@ -38,6 +38,12 @@ module.exports = buildSchema(`
     sale: [Int]
   }
 
+  type AddProduct {
+    product: Product
+    success: Boolean
+    msg: String
+  }
+
   type PreviewProduct {
     code: String!
     title: String!
@@ -77,7 +83,7 @@ module.exports = buildSchema(`
 
   type RootMutation {
     addSampleProduct: [Product]
-    addProduct (code: String) : Product!
+    addProduct (code: String) : AddProduct!
     updateProducts (code: String) : [Product!]
     clear: ClearResult
   }

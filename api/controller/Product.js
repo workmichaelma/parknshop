@@ -8,6 +8,8 @@ const Product = require('../models/Product')
 const { getProductCategoryIDs } = require('./Category')
 const { getProductBrandIDs } = require('./Brand')
 
+const { handleError } = require('./Util')
+
 const previewProduct = async ({ code, url }) => {
   const query = code ? `code/${code}` : url ? `url/${url}` : false
   if (query) {
@@ -90,13 +92,16 @@ module.exports = {
                 }
               ]
             })
-            return await newProduct.save()
+            const r = await newProduct.save()
+            return {
+              success: !!r.title,
+              product: r
+            }
           }
         }
         throw new Error(`No product inserted! ${code} is already exist!`)
       } catch (err) {
-        console.error(err)
-        return err
+        return handleError({ output: code, err })
       }
     })
   },

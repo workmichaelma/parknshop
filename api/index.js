@@ -71,6 +71,10 @@ app.use('/graphql', graphqlHTTP({
   schema: graphqlSchema,
   rootValue: graphqlResolver,
   graphiql: true,
+  formatError: err => ({
+    message: err.message,
+    status: 202
+  })
 }))
 
 const port = 3000;
