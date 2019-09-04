@@ -25,19 +25,15 @@ const previewProduct = async ({ code, url }) => {
 
 const fetchSale = (product) => {
   let sale = []
-  try {
-    if (product.records.length > 1) {
-      const latest = get(product.records[product.records.length - 1], 'prices')
-      const prev = get(product.records[product.records.length - 2], 'prices')
-      sale = latest.map(p => {
-        const prevPrice = get(find(prev, { amount: p.amount }), 'value')
-        return prevPrice ? (parseFloat(prevPrice) > parseFloat(p.value) ? p.amount : false) : p.amount
-      }).filter(p => {
-        return p !== false
-      })
-    }
-  } catch (err) {
-    console.log(err)
+  if (product.records.length > 1) {
+    const latest = get(product.records[product.records.length - 1], 'prices')
+    const prev = get(product.records[product.records.length - 2], 'prices')
+    sale = latest.map(p => {
+      const prevPrice = get(find(prev, { amount: p.amount }), 'value')
+      return prevPrice ? (parseFloat(prevPrice) > parseFloat(p.value) ? p.amount : false) : p.amount
+    }).filter(p => {
+      return p !== false
+    })
   }
   return sale
 }
@@ -53,20 +49,29 @@ const fetchProduct = async (id, detail = false) => {
 }
 
 const updateProduct = async (p) => {
-  return await Product.findOneAndUpdate({ code: p.code }, {
-    new: true,
+  const product = await Product.findOneAndUpdate({ code: p.code }, {
     $addToSet: {
       records: {
         date: p.timestamp,
         prices: p.prices
       },
     },
+  }, {
+    new: true,
+  })
+  const sale = fetchSale(product)
+  return await Product.findOneAndUpdate({ _id: product._id }, {
+    $set: {
+      sale: sale.length > 0
+    }
+  }, {
+    new: true
   })
 }
 
 module.exports = {
   preprocessProduct: product => {
-    product.sale = fetchSale(product)
+    // product.sale = fetchSale(product)
     return product
   },
   fetchProduct,
@@ -76,7 +81,7 @@ module.exports = {
       try {
         if (isEmpty(products) && code) {
           const product = await fetchProduct(code, true)
-          if (product) {
+          if (product && product.title) {
             const categories = await getProductCategoryIDs(product.categories)
             const brands = await getProductBrandIDs(product.brands)
             const newProduct = new Product({
@@ -97,30 +102,32 @@ module.exports = {
               success: !!r.title,
               product: r
             }
+          } else {
+            throw new Error(`No product inserted! ${code} is not a valid product code!`)
           }
         }
         throw new Error(`No product inserted! ${code} is already exist!`)
       } catch (err) {
-        return handleError({ output: code, err })
+        return handleError({ output: {code}, err })
       }
     })
   },
   updateProduct,
   updateProducts: async () => {
-    try {
-      return await Product.find().then(async products => {
-        return await Promise.all(products.map(async p => {
+    return await Product.find().then(async products => {
+      return await Promise.all(products.map(async p => {
+        try {
           const product = await fetchProduct(p.code)
           const newProduct = await updateProduct(product)
           if (!newProduct._id) {
-            throw new Error("Product does not updated!")
+            throw new Error(`Product: ${p.code} does not updated!`)
           } else {
             return newProduct
           }
-        }))
-      })
-    } catch (err) {
-      return err
-    }
+        } catch (err) {
+          return handleError({ output: {code: p.code}, err })
+        }
+      }))
+    })
   },
 }

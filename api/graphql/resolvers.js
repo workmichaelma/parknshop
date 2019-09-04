@@ -8,7 +8,7 @@ const map = require('lodash/map')
 const get = require('lodash/get')
 const sortBy = require('lodash/sortBy')
 
-const { addProduct, updateProducts, preprocessProduct, previewProduct } = require('../controller/Product')
+const { addProduct, updateProducts, previewProduct } = require('../controller/Product')
 const { fetchReport } = require('../controller/Report')
 
 module.exports = {
@@ -32,6 +32,7 @@ module.exports = {
       .limit(itemPerPage)
       .populate({ path: 'categories', select: '-__v -lastMod' })
       .populate({ path: 'brands', select: '-__v -lastMod' })
+      .lean()
       .then(async result => {
         return sortBy(result.map(r => {
           const records = r.records.filter(r => {
@@ -44,10 +45,9 @@ module.exports = {
             .limit(5)
             .populate({ path: 'categories', select: '-__v -lastMod' })
             .populate({ path: 'brands', select: '-__v -lastMod' })
-            .then(ps => {
-              return ps.map(p => preprocessProduct(p._doc))
-            })
-            return { ...c._doc, products }
+            .lean()
+            .then(ps => ps)
+            return { ...c, products }
           })
           const brands = r.brands.map(b => {
             const products = Product
@@ -56,15 +56,13 @@ module.exports = {
             .limit(5)
             .populate({ path: 'categories', select: '-__v -lastMod' })
             .populate({ path: 'brands', select: '-__v -lastMod' })
-            .then(ps => {
-              return ps.map(p => preprocessProduct(p._doc))
-            })
-            return { ...b._doc, products }
+            .lean()
+            .then(ps => ps)
+            return { ...b, products }
           })
-          let product = preprocessProduct(r._doc)
-          return { ...product, categories, records, brands }
-        }), [p1 => {
-          return p1.sale.length < 1
+          return { ...r, categories, records, brands }
+        }), [p => {
+          return !p.sale
         }])
       }).catch(err => {
         console.error(err)
@@ -79,7 +77,7 @@ module.exports = {
       return { msg: 'No Category found' }
     });
   },
-  brand: async ({ _id }) => {
+  brand: async ({ _id, title }) => {
     const target = _id ? { _id } : title ? { title } : {}
     return Brand.find(target, '-__v').then(brands => {
       return brands
