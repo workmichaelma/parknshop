@@ -32,6 +32,11 @@
           </div>
         </div>
       </div>
+      <div class="index-sidebar__add-product">
+        <div v-on:click="setAddProductPopup(true)">
+          + 加入新貨品
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -77,7 +82,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      turnOn: 'index-sidebar/setActive'
+      turnOn: 'index-sidebar/setActive',
+      setAddProductPopup: 'index-sidebar/setAddProductPopup'
     }),
     find,
     init() {
@@ -201,6 +207,23 @@ export default {
       width 0
       overflow hidden
       padding 0
+    > div
+      width 100%
+  &__add-product
+    position relative
+    margin 10px
+    color #a0a0a0
+    display flex
+    justify-content flex-end
+    align-items center
+    font-size 14px
+    > div
+      cursor pointer
+      background #e8e8e8
+      padding 5px 8px
+      border-radius 3px
+      box-shadow 1px 1px 3px 1px #c8c8c8
+    
   &__show-report
     display flex
     align-items center
@@ -212,8 +235,6 @@ export default {
       flex 0 0 40px
 
   &__filters
-    width 100%
-
     .filter
       border 1px solid #e6e6e6
       padding 8px 12px 0 12px

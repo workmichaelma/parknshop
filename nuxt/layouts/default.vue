@@ -1,5 +1,6 @@
 <template>
   <div class="default">
+    <AddProductPopup />
     <MainHeader />
     <div class="main-layout">
       <nuxt class="nuxt-page"/>
@@ -12,10 +13,12 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import MainHeader from '../components/MainHeader/Index'
+import AddProductPopup from '~/components/AddProductPopup'
 export default {
   name: 'default',
   components: {
     MainHeader,
+    AddProductPopup
   },
   computed: {
     ...mapGetters({

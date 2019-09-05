@@ -2,10 +2,10 @@
   <div class="product-main">
     <div class="container">
       <div class="row">
-        <div class="product-main__title col-md-6 col-md-offset-1">
+        <div class="product-main__title col-md-7 col-md-offset-1">
           {{ product.title }}
         </div>
-        <div class="product-main__redirect col-md-4">
+        <div class="product-main__redirect col-md-3">
           <a :href="`https://www.parknshop.com/zh-hk/code/p/${product.code}`" target="_blank">
             百佳網頁
           </a>
@@ -203,6 +203,7 @@ export default {
   &__redirect
     display flex
     justify-content flex-end
+    height 30px
     a
       font-size 14px
       display flex

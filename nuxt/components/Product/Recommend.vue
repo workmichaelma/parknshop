@@ -1,5 +1,5 @@
 <template>
-  <div class="product-recommend" v-if="products">
+  <div class="product-recommend" v-if="products.length > 0">
     <div class="container">
       <div class="row">
         <div v-for="(product, key) in products" :key="key" class="col-md-3">
@@ -8,7 +8,7 @@
               <img :src="product.image" />
             </div>
             <div class="item__detail">
-              <div class="item__title">
+              <div class="item__title" :class="{sale: product.sale.length > 0}">
                 {{ product.title }}
               </div>
             </div>
@@ -77,5 +77,8 @@ export default {
       color #a0a0a0
     img
       width 100%
+    &__title
+      &.sale
+        color #d3d36b
 </style>
 
