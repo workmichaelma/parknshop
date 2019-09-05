@@ -29,12 +29,13 @@ module.exports = {
       .and(categories)
       .and(brands)
       .skip((page - 1) * itemPerPage)
+      .sort({ sale: -1 })
       .limit(itemPerPage)
       .populate({ path: 'categories', select: '-__v -lastMod' })
       .populate({ path: 'brands', select: '-__v -lastMod' })
       .lean()
       .then(async result => {
-        return sortBy(result.map(r => {
+        return result.map(r => {
           const records = r.records.filter(r => {
             return new Date(r.date) >= new Date(from)
           })
@@ -61,9 +62,7 @@ module.exports = {
             return { ...b, products }
           })
           return { ...r, categories, records, brands }
-        }), [p => {
-          return !p.sale
-        }])
+        })
       }).catch(err => {
         console.error(err)
         return []

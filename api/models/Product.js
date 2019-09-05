@@ -10,7 +10,9 @@ const ProductSchema = new Schema({
   },
   title: String,
   image: String,
-  sale: Boolean,
+  sale: [
+    Number
+  ],
   categories: [
     {
       type: Schema.Types.ObjectId,

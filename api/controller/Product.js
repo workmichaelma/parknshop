@@ -62,7 +62,7 @@ const updateProduct = async (p) => {
   const sale = fetchSale(product)
   return await Product.findOneAndUpdate({ _id: product._id }, {
     $set: {
-      sale: sale.length > 0
+      sale
     }
   }, {
     new: true
@@ -125,7 +125,7 @@ module.exports = {
             return newProduct
           }
         } catch (err) {
-          return handleError({ output: {code: p.code}, err })
+          return handleError({ output: { code: p.code }, err })
         }
       }))
     })
