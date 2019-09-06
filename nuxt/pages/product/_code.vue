@@ -51,9 +51,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({
-      saveCategory: 'category/saveCategory'
-    }),
     updateAmount(a) {
       this.amount = a
     },

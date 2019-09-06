@@ -1,7 +1,8 @@
 import client from '../api/apollo-client'
 import { GET_PRODUCT } from '../api/query/index.gql'
-import { GET_CATEGORY } from '~/api/query/category.gql'
+import { GET_BRAND } from '~/api/query/brand.gql'
 
+import findIndex from 'lodash/findIndex'
 import get from 'lodash/get'
 
 import { preprocessProduct } from '~/util/Product'
@@ -9,8 +10,8 @@ import { preprocessProduct } from '~/util/Product'
 export const state = () => { }
 
 export const getters = {
-  getAllProduct: (state) => category => {
-    return get(state, `[${category}].products`)
+  getAllProduct: (state) => brand => {
+    return get(state, `[${brand}].products`)
   }
 }
 
@@ -19,13 +20,13 @@ export const actions = {
     page = page || 0
     let _id = ''
     if (!get(state, `[${title}]._id`)) {
-      const category = await client.query({
-        query: GET_CATEGORY,
+      const brand = await client.query({
+        query: GET_BRAND,
         variables: {
           title
         }
       })
-      _id = get(category, 'data.category[0]._id')
+      _id = get(brand, 'data.brand[0]._id')
     } else {
       _id = state[title]._id
     }
@@ -36,8 +37,8 @@ export const actions = {
           page,
           day: 7,
           ProductFilter: {
-            category: [_id],
-            brand: []
+            brand: [_id],
+            category: []
           }
         }
       })

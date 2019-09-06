@@ -1,0 +1,8 @@
+query GET_BRAND($title: String, $_id: ID) {
+	brand (title: $title, _id: $_id){
+    _id
+    title
+    code
+    url
+  }
+}

@@ -21,12 +21,12 @@
         <div class="product-main__summary col-md-5 col-md-offset-1">
           <div class="product-main__tags">
             <template v-for="(brand, k) in product.brands">
-              <nuxt-link :to="`/brand/${brand.code}`" class="product-main__tag brand" :key="`product-main__tag-brand[${k}]`">
+              <nuxt-link :to="`/brand/${brand.title}`" class="product-main__tag brand" :key="`product-main__tag-brand[${k}]`">
                 {{ brand.title }}
               </nuxt-link>
             </template>
             <template v-for="(category, k) in product.categories">
-              <nuxt-link :to="`/category/${category.code}`" class="product-main__tag category" :key="`product-main__tag-category[${k}]`">
+              <nuxt-link :to="`/category/${category.title}`" class="product-main__tag category" :key="`product-main__tag-category[${k}]`">
                 {{ category.title }}
               </nuxt-link>
             </template>

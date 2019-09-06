@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="product-card__categories">
-        <nuxt-link v-for="(category, k) in product.categories" :key="`product-card__category[${k}]`" class="product-card__category" :to="`/category/${category.code}`">
+        <nuxt-link v-for="(category, k) in product.categories" :key="`product-card__category[${k}]`" class="product-card__category" :to="`/category/${category.title}`">
           {{ category.title }}
         </nuxt-link>
       </div>
