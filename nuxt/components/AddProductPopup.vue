@@ -117,6 +117,7 @@ export default {
     }),
     async next() {
       if (this.step === 1) {
+        this.error = false
         this.loading = true
         
         const product = await client.query({

@@ -2,10 +2,15 @@
   <div class="product-card" :class="{sale}">
     <!-- <div v-if="sale" class="product-card__reminder">SALE</div> -->
     <div class="product-card__info">
-      <div class="product-card__brands">
-        <nuxt-link v-for="(brand, k) in product.brands" :key="`product-card__brand[${k}]`" class="product-card__brand" :to="`/brand/${brand.title}`">
-          {{ brand.title }}
-        </nuxt-link>
+      <div class="product-card__basic">
+        <div class="product-card__brands">
+          <nuxt-link v-for="(brand, k) in product.brands" :key="`product-card__brand[${k}]`" class="product-card__brand" :to="`/brand/${brand.title}`">
+            {{ brand.title }}
+          </nuxt-link>
+        </div>
+        <div class="product-card__title">
+          {{ product.title.replace(brandsText, '') }}
+        </div>
       </div>
       <div class="product-card__categories">
         <nuxt-link v-for="(category, k) in product.categories" :key="`product-card__category[${k}]`" class="product-card__category" :to="`/category/${category.code}`">
@@ -72,6 +77,9 @@ export default {
       //     return parseFloat(get(find(get(v1, `prices`, []), {amount: this.amount}), 'value')) > parseFloat(get(find(get(v2, 'prices', []), {amount: this.amount}), 'value'))
       //   })
       // }
+    },
+    brandsText() {
+      return this.product.brands.map(b => b.title).join(' ')
     }
   },
   methods: {
@@ -93,6 +101,7 @@ export default {
   border 1px solid #e6e6e6
   border-radius 3px
   font-family 'Blinker'
+  height fit-content
 
   &.sale
     border 2px solid #e8e837
@@ -113,18 +122,25 @@ export default {
     font-size 24px
 
   &__info
-    display flex
-    justify-content space-between
     border-bottom 1px solid #efefef
-    padding 16px
+    padding 12px
+  &__basic
+    display flex
+    line-height 20px
+  &__title
+    margin-left 2px
   &__brand
     color #262626
+    text-decoration underline
     letter-spacing 1px
   &__categories
     display flex
+    justify-content flex-end
+    margin-top 5px
   &__category
     display block
     position relative
+    width fit-content
     padding 2px 5px 2px 10px
     font-weight bold
     font-size 13px

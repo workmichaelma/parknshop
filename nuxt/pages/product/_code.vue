@@ -29,6 +29,11 @@ export default {
        return
      }
   },
+  head() {
+    return {
+      title: this.product.title
+    }
+  },
   mixins: [
     Product
   ],

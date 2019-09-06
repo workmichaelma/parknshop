@@ -1,0 +1,28 @@
+query SEARCH_PRODUCT($keywords: String, $page: Int) {
+	product (keywords: $keywords, page: $page){
+    _id
+    code
+    title
+    image
+    sale
+    categories {
+      _id
+      title
+      code
+      url
+    }
+    brands {
+      _id
+      title
+      code
+      url      
+    }
+    records {
+      date
+      prices {
+        amount
+        value
+      }
+    }
+  }
+}

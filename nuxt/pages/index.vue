@@ -40,6 +40,11 @@ export default {
       readyToFetchProducts: false
     }
   },
+  head() {
+    return {
+      title: '格價'
+    }
+  },
   components: {
     ProductCard,
     IndexSidebar

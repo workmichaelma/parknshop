@@ -12,8 +12,9 @@ const { addProduct, updateProducts, previewProduct } = require('../controller/Pr
 const { fetchReport } = require('../controller/Report')
 
 module.exports = {
-  product: async ({ code, day, _id, page, filter }) => {
+  product: async ({ code, day, _id, page, filter, keywords }) => {
     const target = code ? { code } : _id ? { _id } : {}
+    const search = keywords ? { title: { $regex: `${keywords}.*`, $options: 'i' } } : {}
     const itemPerPage = page === 0 ? 0 : 5
     const from = new Date(new Date().setDate(new Date().getDate() - day)).toLocaleString('en-GB', { timeZone: 'Asia/Hong_Kong' })
 
@@ -25,7 +26,7 @@ module.exports = {
     }) : {}
 
     return Product
-      .find(target, '-__v')
+      .find({ ...target, ...search }, '-__v')
       .and(categories)
       .and(brands)
       .skip((page - 1) * itemPerPage)
