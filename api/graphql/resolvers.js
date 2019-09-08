@@ -95,7 +95,7 @@ module.exports = {
     }))
   },
   addProduct: async ({ code }, req) => {
-    return await addProduct(code)
+    return await [addProduct(code)]
   },
   updateProducts: async ({ }, req) => {
     return await updateProducts()

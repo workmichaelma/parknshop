@@ -150,9 +150,9 @@ export default {
         })
         this.loading = false
         this.step = 3
-        if (get(product, 'data.addProduct.title')) {
-          this.product = product.data.addProduct
-        } else if (!get(product, 'data.addProduct.success')) {
+        if (get(product, 'data.addProduct[0].title')) {
+          this.product = product.data.addProduct[0]
+        } else {
           this.error = true
         }
       }

@@ -97,18 +97,16 @@ module.exports = {
                 }
               ]
             })
-            const r = await newProduct.save()
-            return {
-              success: !!r.title,
-              product: r
-            }
+            return await newProduct.save()
           } else {
             throw new Error(`No product inserted! ${code} is not a valid product code!`)
           }
         }
         throw new Error(`No product inserted! ${code} is already exist!`)
       } catch (err) {
-        return handleError({ output: {code}, err })
+        console.log(err)
+        return null
+        // return handleError({ output: {code}, err })
       }
     })
   },

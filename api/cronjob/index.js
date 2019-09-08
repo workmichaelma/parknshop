@@ -13,10 +13,12 @@ const Brand = require('../models/Brand');
 
 const { fetchReport } = require('../controller/Report')
 const { addProduct, updateProducts } = require('../controller/Product')
+const isDev = process.env.NODE_ENV === 'development'
+const DB_NAME = isDev ? 'test' : 'parknshop'
 
 // Connect to MongoDB
-const localDB = `mongodb://mongo:27017/parknshop`
-const cloudDB = `mongodb+srv://michaelma:footballwork@cluster0-s8vjq.azure.mongodb.net/parknshop?retryWrites=true&w=majority`
+const localDB = `mongodb://mongo:27017/${DB_NAME}`
+const cloudDB = `mongodb+srv://michaelma:footballwork@cluster0-s8vjq.azure.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`
 mongoose.connect(cloudDB,{ useNewUrlParser: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));

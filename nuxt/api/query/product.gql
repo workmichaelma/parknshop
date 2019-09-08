@@ -67,11 +67,7 @@ query PREVIEW_PRODUCT($code: String, $url: String) {
 
 mutation ADD_PRODUCT($code: String) {
   addProduct (code: $code) {
-    success
-    msg
-    product {
-      title
-      code
-    }
+    title
+    code
   }
 }
