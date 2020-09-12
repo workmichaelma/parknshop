@@ -26,7 +26,7 @@
     "graphql-tag": "^2.10.1",
     "intersection-observer": "^0.7.0",
     "lodash": "^4.17.15",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "nuxt": "^2.0.0",
     "v-charts": "^1.19.0",
     "validator": "^11.1.0"
