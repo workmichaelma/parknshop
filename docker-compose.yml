@@ -6,7 +6,7 @@ services:
     volumes:
       - ./backend:/app/parknshop/backend
     ports:
-      - 3000:3000
+      - 3333:3000
     environment:
-      - "isDev=${isDev}"
+      - 'isDev=${isDev}'
     command: sh -c "npm run dev"
