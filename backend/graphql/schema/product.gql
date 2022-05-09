@@ -1,0 +1,53 @@
+schema {
+  query: Query
+}
+
+type Product {
+  code: ID
+  name: String
+  brand: Brand
+  isSale: Boolean
+  max: Float
+  min: Float
+  category: [Category]
+  unitSize: String
+  prices: [Price]
+  image: String
+  url: String
+}
+
+type Category {
+  code: String
+  name: String
+  _id: String
+}
+
+type Brand {
+  image: String
+  name: String
+  _id: String
+}
+
+type Price {
+  price: Float
+  date: String
+}
+
+type Products {
+  docs: [Product]
+  totalDocs: Int
+  hasNextPage: Boolean
+  page: Int
+  totalPages: Int
+}
+
+type Query {
+  product(code: ID): Product
+  products(
+    page: Int
+    brandId: String
+    brandName: String
+    categoryId: String
+    categoryName: String
+  ): Products
+}
